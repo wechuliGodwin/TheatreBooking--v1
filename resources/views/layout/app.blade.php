@@ -30,6 +30,8 @@
             left: 0;
             z-index: 1000;
             transition: all 0.3s ease;
+            overflow-y: auto;
+            /* Enable vertical scrolling */
         }
 
         .sidebar.collapsed {
@@ -233,6 +235,40 @@
         .progress-bar {
             background: linear-gradient(90deg, #3498db, #2980b9);
         }
+
+        .nav-group-toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-group-toggle::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+
+        .nav-group-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
+        }
+
+        .nav-group-items {
+            padding-left: 1.5rem;
+        }
+
+        .nav-group-items .nav-link {
+            font-size: 0.875rem;
+        }
+
+        .nav-icon-bullet {
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: #bdc3c7;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 
@@ -240,43 +276,173 @@
     <!-- Sidebar -->
     <div class="sidebar d-flex flex-column p-3">
         <div class="sidebar-header d-flex align-items-center mb-4 pb-3 border-bottom">
-            <h4 class="text-white mb-0">Dashboard</h4>
+            <h4 class="text-white mb-0">Theatre Booking</h4>
         </div>
 
         <nav class="nav flex-column">
-            <a class="nav-link active" href="#">
+            <a class="nav-link active" href="{{ route('dashboard') }}">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
+        </nav>
+        <nav class="nav flex-column">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#requestsSubmenu" aria-expanded="false">
+                <i class="fas fa-chart-bar"></i>
+                <span>Need surgery</span>
+            </a>
+            <ul class="nav-group-items collapse" id="requestsSubmenu">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('requested_surgeries') }}">
+                        <span class="nav-icon-bullet"></span>
+                        Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Cancelled Appointments
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <nav class="nav flex-column">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#statusSubmenu" aria-expanded="false">
+                <i class="fas fa-chart-bar"></i>
+                <span>Theatre Status</span>
+            </a>
+            <ul class="nav-group-items collapse" id="statusSubmenu">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Add New Request
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        SHA Submitted, Pending Approval
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Ready to Schedule
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Scheduled
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Rescheduled
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Completed
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        SHA Rejected
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Inactive
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Cancelled
+                    </a>
+                </li>
+            </ul>
+
             <a class="nav-link" href="#">
                 <i class="fas fa-users"></i>
-                <span>Users</span>
+                <span>Finalized Surgeries</span>
             </a>
-            <a class="nav-link" href="#">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
+            <nav class="nav flex-column">
+                <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#requestsSubmenu" aria-expanded="false">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Pink Form</span>
+                </a>
+                <ul class="nav-group-items collapse" id="requestsSubmenu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="nav-icon-bullet"></span>
+                            Create
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="nav-icon-bullet"></span>
+                            Pending List
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="nav-icon-bullet"></span>
+                            Approved List
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </nav>
 
-        <hr class="text-muted my-4">
+        <!-- <hr class="text-muted my-4"> -->
 
         <nav class="nav flex-column">
-            <a class="nav-link" href="#">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
-                <span>Components</span>
+                <span>Reports</span>
             </a>
-            <a class="nav-link" href="#">
-                <i class="fas fa-palette"></i>
-                <span>Theme</span>
+            <ul class="nav-group-items collapse" id="reportsSubmenu">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Summary
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-icon-bullet"></span>
+                        Detailed
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+        <nav class="nav flex-column">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
+                <i class="fas fa-chart-bar"></i>
+                <span>Accounts</span>
             </a>
-            <a class="nav-link" href="#">
-                <i class="fas fa-file-alt"></i>
-                <span>Pages</span>
-            </a>
-            <a class="nav-link" href="#">
-                <i class="fas fa-book"></i>
-                <span>Docs</span>
-            </a>
+            <ul class="nav-group-items collapse" id="reportsSubmenu">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <hr class="text-muted my-4">
+
         </nav>
 
         <div class="mt-auto">
@@ -307,7 +473,7 @@
                     <!-- User Dropdown -->
                     <div class="dropdown">
                         <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="https://via.placeholder.com/32x32" class="rounded-circle me-2" alt="User" width="32" height="32">
+                            <img src="{{ asset('img/avator/user.png') }}" class="rounded-circle me-2" alt="User" width="32" height="32">
                             <span class="d-none d-md-inline">Admin User</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
