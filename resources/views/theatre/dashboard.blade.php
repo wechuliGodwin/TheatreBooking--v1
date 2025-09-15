@@ -33,9 +33,12 @@
               <i class="fas fa-users"></i>
             </div>
             <div class="flex-grow-1">
-              <h5 class="card-title mb-0">26K</h5>
+              <h5 class="card-title mb-0">{{ $totalRequestedTheatre }}</h5>
               <p class="card-text mb-1">Need Surgery</p>
               <!-- <small class="text-danger"><i class="fas fa-arrow-down me-1"></i>12.4%</small> -->
+            </div>
+            <div class="card-footer bg-transparent">
+              <a href="{{ route('requested_surgeries.index') }}" class="small card-text">Details</a>
             </div>
           </div>
         </div>
@@ -290,248 +293,248 @@
       </div>
     </div> -->
 
-    <!-- Recent Users Table -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">Recent Users</h6>
-            <div>
-              <select class="form-select form-select-sm d-inline-block w-auto" style="width: 120px;">
-                <option>All</option>
-                <option>New</option>
-                <option>Recurring</option>
-              </select>
+      <!-- Recent Users Table -->
+      <!-- <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">Recent Users</h6>
+              <div>
+                <select class="form-select form-select-sm d-inline-block w-auto" style="width: 120px;">
+                  <option>All</option>
+                  <option>New</option>
+                  <option>Recurring</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Country</th>
-                    <th>Usage</th>
-                    <th>Payment Method</th>
-                    <th>Activity</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
-                          alt="User" width="40" height="40">
-                        <div>
-                          <div class="fw-bold">Yiorgos Avraamu</div>
-                          <small class="text-muted">New | Registered: Jan 1, 2025</small>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Country</th>
+                      <th>Usage</th>
+                      <th>Payment Method</th>
+                      <th>Activity</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
+                            alt="User" width="40" height="40">
+                          <div>
+                            <div class="fw-bold">Yiorgos Avraamu</div>
+                            <small class="text-muted">New | Registered: Jan 1, 2025</small>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>🇺🇸 USA</td>
-                    <td>
-                      <div class="progress" style="height: 8px;">
-                        <div class="progress-bar" style="width: 50%"></div>
-                      </div>
-                      <small class="text-muted">50%</small>
-                      <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
-                    </td>
-                    <td>
-                      <span class="badge bg-primary">Credit Card</span>
-                    </td>
-                    <td>
-                      <small class="text-success">Last login 10 sec ago</small>
-                    </td>
-                    <td>
-                      <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
-                        <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
-                          alt="User" width="40" height="40">
-                        <div>
-                          <div class="fw-bold">Avram Tarasios</div>
-                          <small class="text-muted">Recurring | Registered: Jan 1, 2025</small>
+                      </td>
+                      <td>🇺🇸 USA</td>
+                      <td>
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar" style="width: 50%"></div>
                         </div>
-                      </div>
-                    </td>
-                    <td>🇬🇷 Greece</td>
-                    <td>
-                      <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 10%"></div>
-                      </div>
-                      <small class="text-success">10%</small>
-                      <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
-                    </td>
-                    <td>
-                      <span class="badge bg-success">PayPal</span>
-                    </td>
-                    <td>
-                      <small class="text-primary">Last login 5 minutes ago</small>
-                    </td>
-                    <td>
-                      <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
-                        <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
-                          alt="User" width="40" height="40">
-                        <div>
-                          <div class="fw-bold">Quintin Ed</div>
-                          <small class="text-muted">New | Registered: Jan 1, 2025</small>
+                        <small class="text-muted">50%</small>
+                        <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
+                      </td>
+                      <td>
+                        <span class="badge bg-primary">Credit Card</span>
+                      </td>
+                      <td>
+                        <small class="text-success">Last login 10 sec ago</small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
+                          <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
+                          <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
                         </div>
-                      </div>
-                    </td>
-                    <td>🇬🇧 UK</td>
-                    <td>
-                      <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-warning" style="width: 74%"></div>
-                      </div>
-                      <small class="text-warning">74%</small>
-                      <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
-                    </td>
-                    <td>
-                      <span class="badge bg-info">Bank Transfer</span>
-                    </td>
-                    <td>
-                      <small class="text-info">Last login 1 hour ago</small>
-                    </td>
-                    <td>
-                      <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
-                        <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
-                          alt="User" width="40" height="40">
-                        <div>
-                          <div class="fw-bold">Enéas Kwadwo</div>
-                          <small class="text-muted">New | Registered: Jan 1, 2025</small>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
+                            alt="User" width="40" height="40">
+                          <div>
+                            <div class="fw-bold">Avram Tarasios</div>
+                            <small class="text-muted">Recurring | Registered: Jan 1, 2025</small>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>🇳🇬 Nigeria</td>
-                    <td>
-                      <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-danger" style="width: 98%"></div>
-                      </div>
-                      <small class="text-danger">98%</small>
-                      <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
-                    </td>
-                    <td>
-                      <span class="badge bg-warning">Crypto</span>
-                    </td>
-                    <td>
-                      <small class="text-muted">Last login last month</small>
-                    </td>
-                    <td>
-                      <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
-                        <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                      </td>
+                      <td>🇬🇷 Greece</td>
+                      <td>
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar bg-success" style="width: 10%"></div>
+                        </div>
+                        <small class="text-success">10%</small>
+                        <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
+                      </td>
+                      <td>
+                        <span class="badge bg-success">PayPal</span>
+                      </td>
+                      <td>
+                        <small class="text-primary">Last login 5 minutes ago</small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
+                          <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
+                          <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
+                            alt="User" width="40" height="40">
+                          <div>
+                            <div class="fw-bold">Quintin Ed</div>
+                            <small class="text-muted">New | Registered: Jan 1, 2025</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>🇬🇧 UK</td>
+                      <td>
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar bg-warning" style="width: 74%"></div>
+                        </div>
+                        <small class="text-warning">74%</small>
+                        <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
+                      </td>
+                      <td>
+                        <span class="badge bg-info">Bank Transfer</span>
+                      </td>
+                      <td>
+                        <small class="text-info">Last login 1 hour ago</small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
+                          <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
+                          <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://via.placeholder.com/40x40" class="rounded-circle me-3"
+                            alt="User" width="40" height="40">
+                          <div>
+                            <div class="fw-bold">Enéas Kwadwo</div>
+                            <small class="text-muted">New | Registered: Jan 1, 2025</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>🇳🇬 Nigeria</td>
+                      <td>
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar bg-danger" style="width: 98%"></div>
+                        </div>
+                        <small class="text-danger">98%</small>
+                        <br><small class="text-muted">Jun 11, 2025 - Jul 10, 2025</small>
+                      </td>
+                      <td>
+                        <span class="badge bg-warning">Crypto</span>
+                      </td>
+                      <td>
+                        <small class="text-muted">Last login last month</small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary btn-action">Info</button>
+                          <button class="btn btn-sm btn-outline-secondary btn-action">Edit</button>
+                          <button class="btn btn-sm btn-outline-danger btn-action">Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
-  </div>
 
-  <!-- Chart.js Initialization -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Traffic Chart
-      const trafficCtx = document.getElementById('trafficChart').getContext('2d');
-      new Chart(trafficCtx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-          datasets: [{
-            label: 'Traffic',
-            data: [65000, 72000, 68000, 75000, 71000, 78000, 82000],
-            borderColor: '#3498db',
-            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            }
+    <!-- Chart.js Initialization -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Traffic Chart
+        const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+        new Chart(trafficCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+              label: 'Traffic',
+              data: [65000, 72000, 68000, 75000, 71000, 78000, 82000],
+              borderColor: '#3498db',
+              backgroundColor: 'rgba(52, 152, 219, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value / 1000 + 'k';
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return value / 1000 + 'k';
+                  }
                 }
               }
             }
           }
-        }
-      });
+        });
 
-      // Weekly Chart
-      const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-      new Chart(weeklyCtx, {
-        type: 'bar',
-        data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          datasets: [{
-            label: 'New Clients',
-            data: [1200, 1900, 1500, 2200, 1800, 900, 600],
-            backgroundColor: '#3498db'
-          }, {
-            label: 'Recurring',
-            data: [800, 1100, 950, 1300, 1050, 700, 450],
-            backgroundColor: '#2ecc71'
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            }
+        // Weekly Chart
+        const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+        new Chart(weeklyCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+              label: 'New Clients',
+              data: [1200, 1900, 1500, 2200, 1800, 900, 600],
+              backgroundColor: '#3498db'
+            }, {
+              label: 'Recurring',
+              data: [800, 1100, 950, 1300, 1050, 700, 450],
+              backgroundColor: '#2ecc71'
+            }]
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value / 100 + 'k';
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return value / 100 + 'k';
+                  }
                 }
               }
             }
           }
-        }
+        });
       });
-    });
-  </script>
-  @endsection
+    </script>
+    @endsection

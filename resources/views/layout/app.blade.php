@@ -286,13 +286,13 @@
             </a>
         </nav>
         <nav class="nav flex-column">
-            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#requestsSubmenu" aria-expanded="false">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#needSurgerySubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
-                <span>Need surgery</span>
+                <span>Need Surgery</span>
             </a>
-            <ul class="nav-group-items collapse" id="requestsSubmenu">
+            <ul class="nav-group-items collapse" id="needSurgerySubmenu">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('requested_surgeries') }}">
+                    <a class="nav-link" href="{{ route('requested_surgeries.index') }}">
                         <span class="nav-icon-bullet"></span>
                         Appointments
                     </a>
@@ -306,11 +306,11 @@
             </ul>
         </nav>
         <nav class="nav flex-column">
-            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#statusSubmenu" aria-expanded="false">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#theatreStatusSubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
                 <span>Theatre Status</span>
             </a>
-            <ul class="nav-group-items collapse" id="statusSubmenu">
+            <ul class="nav-group-items collapse" id="theatreStatusSubmenu">
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <span class="nav-icon-bullet"></span>
@@ -366,17 +366,16 @@
                     </a>
                 </li>
             </ul>
-
             <a class="nav-link" href="#">
                 <i class="fas fa-users"></i>
                 <span>Finalized Surgeries</span>
             </a>
             <nav class="nav flex-column">
-                <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#requestsSubmenu" aria-expanded="false">
+                <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#pinkFormSubmenu" aria-expanded="false">
                     <i class="fas fa-chart-bar"></i>
                     <span>Pink Form</span>
                 </a>
-                <ul class="nav-group-items collapse" id="requestsSubmenu">
+                <ul class="nav-group-items collapse" id="pinkFormSubmenu">
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <span class="nav-icon-bullet"></span>
@@ -398,9 +397,6 @@
                 </ul>
             </nav>
         </nav>
-
-        <!-- <hr class="text-muted my-4"> -->
-
         <nav class="nav flex-column">
             <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
@@ -420,14 +416,13 @@
                     </a>
                 </li>
             </ul>
-
         </nav>
         <nav class="nav flex-column">
-            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
+            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#accountsSubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
                 <span>Accounts</span>
             </a>
-            <ul class="nav-group-items collapse" id="reportsSubmenu">
+            <ul class="nav-group-items collapse" id="accountsSubmenu">
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="fas fa-users"></i>
@@ -442,9 +437,7 @@
                 </li>
             </ul>
             <hr class="text-muted my-4">
-
         </nav>
-
         <div class="mt-auto">
             <a class="nav-link text-danger" href="#">
                 <i class="fas fa-sign-out-alt"></i>
@@ -499,10 +492,10 @@
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col">
-                        <p class="mb-0 text-muted">&copy; 2025 Admin Dashboard. Powered by Bootstrap.</p>
+                        <p class="mb-0 text-muted">&copy; 2025 Theatre Dashboard. Powered by Wechuli.</p>
                     </div>
                     <div class="col-auto">
-                        <p class="mb-0 text-muted">Version 1.0.0</p>
+                        <p class="mb-0 text-muted">Version 1.0</p>
                     </div>
                 </div>
             </div>

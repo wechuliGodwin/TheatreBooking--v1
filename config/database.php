@@ -63,21 +63,6 @@ return [
             ]) : [],
         ],
 
-        'mysql_remote' => [
-            'driver' => 'mysql',
-            'url' => env('DB_URL_EXTERNAL'),
-            'host' => env('DB_HOST_EXTERNAL'),
-            'port' => env('DB_PORT_EXTERNAL', '3306'),
-            'database' => env('DB_DATABASE_EXTERNAL'),
-            'username' => env('DB_USERNAME_EXTERNAL'),
-            'password' => env('DB_PASSWORD_EXTERNAL'),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
-        ],
-
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
@@ -113,20 +98,27 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'sqlsrv' => [
+        'sqlsrv_remote' => [
             'driver' => 'sqlsrv',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => env('DB_CHARSET', 'utf8'),
+            'url' => env('DATABASE_URL'),
+            'host' => env('REMOTE_DB_HOST', '192.168.2.67'),
+            'port' => env('REMOTE_DB_PORT', '1433'),
+            'database' => env('REMOTE_DB_DATABASE', 'SmartCare_Kijabe'),
+            'username' => env('REMOTE_DB_USERNAME', 'smartenduser'),
+            'password' => env('REMOTE_DB_PASSWORD', 'l0l0t1ng@2209'),
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+            'encrypt' => env('REMOTE_DB_ENCRYPT', 'no'),
+            'trust_server_certificate' => env('REMOTE_DB_TRUST_SERVER_CERTIFICATE', false)
         ],
+        // 'odbc_remote' => [
+        //     'driver' => 'odbc',
+        //     'dsn' => env('REMOTE_ODBC_DSN'),
+        //     'username' => env('REMOTE_DB_USERNAME'),
+        //     'password' => env('REMOTE_DB_PASSWORD'),
+        //     'database' => env('REMOTE_DB_DATABASE'),
+        // ],
 
     ],
 
