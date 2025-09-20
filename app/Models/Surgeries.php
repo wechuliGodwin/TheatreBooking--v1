@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Surgeries extends Model
 {
-    // This model will use the default database connection (your local db)
-    protected $table = 'local_surgeries'; // or whatever the table name is
+    protected $table = 'surgeries';
 
-    // Define the fillable properties that correspond to your local table schema
     protected $fillable = [
+        'SessionNumber',
+        'SessionDate',
+        'TheatreRequestDate',
         'FullName',
-        'MRN',
-        'PhoneNumbers', // You'll need to pull this from the remote DB somehow or add it manually
+        'PatientNumber',
+        'PhoneNumbers',
         'TheatreRoom',
         'Age',
         'SchedulingStatus',
@@ -54,5 +55,27 @@ class Surgeries extends Model
         'CancellationReason',
         'CancellationType',
         'CancelledAt',
+    ];
+
+    protected $casts = [
+        'SchedulingStatus' => 'string',
+        'PaymentType' => 'string',
+        'SecondaryPayer' => 'string',
+        'PostOpLocation' => 'string',
+        'TheatreRoom' => 'string',
+        'Department' => 'string',
+        'SurgeryType' => 'string',
+        'DepartmentAdditional' => 'string',
+        'UrgentCancer' => 'boolean',
+        'RequiresAnesthesiaClearance' => 'boolean',
+        'SHAEligible' => 'boolean',
+        'SessionDate' => 'date',
+        'TheatreRequestDate' => 'date',
+        'ProposedDateofSurgery' => 'date',
+        'DateofSurgery' => 'date',
+        'SHAExpiryDate' => 'date',
+        'DateDepositPaid' => 'date',
+        'EntryDate' => 'date',
+        'CancelledAt' => 'date',
     ];
 }

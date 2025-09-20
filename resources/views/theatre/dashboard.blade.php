@@ -35,10 +35,9 @@
             <div class="flex-grow-1">
               <h5 class="card-title mb-0">{{ $totalRequestedTheatre }}</h5>
               <p class="card-text mb-1">Need Surgery</p>
-              <!-- <small class="text-danger"><i class="fas fa-arrow-down me-1"></i>12.4%</small> -->
             </div>
             <div class="card-footer bg-transparent">
-              <a href="{{ route('requested_surgeries.index') }}" class="small card-text">Details</a>
+              <a href="{{ route('requested_surgeries.index', 'Booking') }}" class="small card-text">Details</a>
             </div>
           </div>
         </div>
@@ -57,9 +56,11 @@
               <i class="fas fa-dollar-sign"></i>
             </div>
             <div class="flex-grow-1">
-              <h5 class="card-title mb-0">$6,200</h5>
-              <p class="card-text mb-1">SHA Submitted,Pending Approval</p>
-              <!-- <small class="text-success"><i class="fas fa-arrow-up me-1"></i>40.9%</small> -->
+              <h5 class="card-title mb-0">{{ $totalIntraOperations }}</h5>
+              <p class="card-text mb-1">Operation</p>
+            </div>
+            <div class="card-footer bg-transparent">
+              <a href="{{ route('requested_surgeries.index', 'Operation') }}" class="small card-text">Details</a>
             </div>
           </div>
         </div>
@@ -79,7 +80,7 @@
             </div>
             <div class="flex-grow-1">
               <h5 class="card-title mb-0">2.49%</h5>
-              <p class="card-text mb-1">Ready to Schedule</p>
+              <p class="card-text mb-1">SHA ApprOved </p>
               <!-- <small class="text-success"><i class="fas fa-arrow-up me-1"></i>84.7%</small> -->
             </div>
           </div>
@@ -173,29 +174,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Sessions Card -->
-    <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card stat-card border-left-danger h-100">
-        <div class="card-body">
-          <div class="d-flex align-items-center">
-            <div class="stat-icon sessions-icon text-white">
-              <i class="fas fa-calendar"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="card-title mb-0">44K</h5>
-              <p class="card-text mb-1">Recheduled Appointments</p>
-              <!-- <small class="text-danger"><i class="fas fa-arrow-down me-1"></i>23.6%</small> -->
-            </div>
-          </div>
-        </div>
-        <div class="card-footer bg-transparent">
-          <small class="text-muted">Current month</small>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sessions Card -->
+    z <!-- Sessions Card -->
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card stat-card border-left-danger h-100">
         <div class="card-body">
@@ -294,7 +273,7 @@
     </div> -->
 
       <!-- Recent Users Table -->
-      <!-- <div class="row">
+      <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -459,7 +438,7 @@
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
 
     <!-- Chart.js Initialization -->

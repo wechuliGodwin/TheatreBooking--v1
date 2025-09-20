@@ -1,0 +1,393 @@
+@extends('layout.app')
+
+@section('title', 'Create Theatre Booking')
+
+@section('content')
+<style>
+    .form-label { font-weight: 500; }
+    .form-control-sm, .form-select-sm { height: 30px; font-size: 0.85rem; }
+    .accordion-button { font-size: 0.9rem; padding: 0.75rem 1rem; font-weight: bold; }
+    .accordion-body { padding: 1rem; }
+    .form-check { margin-bottom: 0.5rem; }
+    .tooltip-inner { max-width: 200px; }
+    .file-upload-info { font-size: 0.8rem; color: #6c757d; }
+    .edit-toggle-btn { transition: background-color 0.3s; }
+    .edit-toggle-btn.active { background-color: #28a745; border-color: #28a745; color: white; }
+    .readonly-field { background-color: #f8f9fa; }
+    .section-header { font-size: 0.9rem; font-weight: bold; margin-bottom: 1rem; }
+</style>
+
+<div class="container-fluid p-3">
+    <h1 class="mb-3 fs-4">Create Theatre Booking</h1>
+
+    @if ($errors->any())
+        <div class="alert alert-danger mb-2 p-2">
+            <strong>Validation Errors:</strong>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger mb-2 p-2">
+            <strong>Error:</strong> {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success mb-2 p-2">
+            <strong>Success:</strong> {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="card shadow-sm">
+        <div class="card-body p-3">
+            <form action="{{ route('booked_theatre.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off" id="bookingForm">
+                @csrf
+                <input type="hidden" name="id" value="{{ old('id', $surgery->SessionNumber ?? '') }}">
+
+                <!-- Patient Information (Non-Collapsible) -->
+                <div class="mb-3">
+                    <h2 class="section-header">Theatre Booking Details - Patient Information</h2>
+                    <div class="mb-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm edit-toggle-btn" id="toggleEditPatientInfo">Edit Patient Info</button>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="session_number" class="form-label small">Session Number</label>
+                            <input type="text" name="session_number" id="session_number" class="form-control form-control-sm readonly-field" value="{{ old('session_number', $surgery->SessionNumber ?? '') }}" readonly>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="full_name" class="form-label small">Full Name</label>
+                            <input type="text" name="full_name" id="full_name" class="form-control form-control-sm readonly-field" value="{{ old('full_name', $surgery->PatientName ?? '') }}" readonly>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="mrn" class="form-label small">Patient Number</label>
+                            <input type="text" name="mrn" id="mrn" class="form-control form-control-sm readonly-field" value="{{ old('mrn', $surgery->PatientNumber ?? '') }}" readonly>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="session_date" class="form-label small">Session Date</label>
+                            <input type="date" name="session_date" id="session_date" class="form-control form-control-sm readonly-field" value="{{ old('session_date', $surgery->booking_date ?? '') }}" readonly>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="theatre_request_date" class="form-label small">Theatre Request Date</label>
+                            <input type="date" name="theatre_request_date" id="theatre_request_date" class="form-control form-control-sm readonly-field" value="{{ old('theatre_request_date', $surgery->Requested_on ?? '') }}" readonly>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="phone_numbers" class="form-label small" data-bs-toggle="tooltip" title="Enter patient's contact numbers">Phone Numbers</label>
+                            <input type="text" name="phone_numbers" id="phone_numbers" class="form-control form-control-sm" value="{{ old('phone_numbers') }}">
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label for="age" class="form-label small">Age</label>
+                            <input type="number" name="age" id="age" class="form-control form-control-sm" value="{{ old('age', $surgery->Age ?? '') }}" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion" id="bookingAccordion">
+                    <!-- Surgery Details -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#surgeryDetails" aria-expanded="false" aria-controls="surgeryDetails">
+                                Surgery Details
+                            </button>
+                        </h2>
+                        <div id="surgeryDetails" class="accordion-collapse collapse" data-bs-parent="#bookingAccordion">
+                            <div class="accordion-body">
+                                <div class="row g-2">
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="scheduling_status" class="form-label small" data-bs-toggle="tooltip" title="Current scheduling status of the surgery">Scheduling Status</label>
+                                        <select name="scheduling_status" id="scheduling_status" class="form-select form-select-sm">
+                                            <option value="">Select Status</option>
+                                            @foreach (['Need Surgery', 'SHA Submitted, Pending Approval', 'Insurance Approved/Deposit Paid; Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected'] as $status)
+                                                <option value="{{ $status }}" {{ old('scheduling_status', $surgery->Status ?? '') == $status ? 'selected' : '' }}>{{ $status }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="booking_status" class="form-label small">Booking Status</label>
+                                        <input type="text" name="booking_status" id="booking_status" class="form-control form-control-sm" value="{{ old('booking_status', $surgery->Status ?? '') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="diagnosis" class="form-label small">Diagnosis</label>
+                                        <input type="text" name="diagnosis" id="diagnosis" class="form-control form-control-sm" value="{{ old('diagnosis', $surgery->PreferredName ?? '') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="surgery" class="form-label small">Surgery</label>
+                                        <input type="text" name="surgery" id="surgery" class="form-control form-control-sm" value="{{ old('surgery', $surgery->theatre_procedure_requested ?? '') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="surgery_type" class="form-label small">Surgery Type</label>
+                                        <select name="surgery_type" id="surgery_type" class="form-select form-select-sm">
+                                            <option value="">Select Type</option>
+                                            @foreach (['Elective', 'Emergency', 'Minor', 'Major'] as $type)
+                                                <option value="{{ $type }}" {{ old('surgery_type', $surgery->SessionType ?? '') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="surgery_category" class="form-label small">Surgery Category</label>
+                                        <input type="text" name="surgery_category" id="surgery_category" class="form-control form-control-sm" value="{{ old('surgery_category') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="proposed_date_of_surgery" class="form-label small">Proposed Date of Surgery</label>
+                                        <input type="date" name="proposed_date_of_surgery" id="proposed_date_of_surgery" class="form-control form-control-sm" value="{{ old('proposed_date_of_surgery') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="date_of_surgery" class="form-label small">Date of Surgery</label>
+                                        <input type="date" name="date_of_surgery" id="date_of_surgery" class="form-control form-control-sm" value="{{ old('date_of_surgery') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="theatre_room" class="form-label small">Theatre Room</label>
+                                        <select name="theatre_room" id="theatre_room" class="form-select form-select-sm">
+                                            <option value="">Select Room</option>
+                                            @foreach (['Room1', 'Room2', 'Room3', 'Room4', 'Other'] as $room)
+                                                <option value="{{ $room }}" {{ old('theatre_room', $surgery->OperationRoom ?? '') == $room ? 'selected' : '' }}>{{ $room }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="case_order" class="form-label small" data-bs-toggle="tooltip" title="Order of the case in the theatre schedule">Case Order</label>
+                                        <input type="text" name="case_order" id="case_order" class="form-control form-control-sm" value="{{ old('case_order') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="length_of_surgery" class="form-label small">Length of Surgery</label>
+                                        <input type="text" name="length_of_surgery" id="length_of_surgery" class="form-control form-control-sm" value="{{ old('length_of_surgery') }}" placeholder="e.g., 2 hours">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="notes_comments" class="form-label small">Notes/Comments</label>
+                                        <textarea name="notes_comments" id="notes_comments" class="form-control form-control-sm" rows="2">{{ old('notes_comments') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paymentInfo" aria-expanded="false" aria-controls="paymentInfo">
+                                Payment Information
+                            </button>
+                        </h2>
+                        <div id="paymentInfo" class="accordion-collapse collapse" data-bs-parent="#bookingAccordion">
+                            <div class="accordion-body">
+                                <div class="row g-2">
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="payment_type" class="form-label small">Payment Type</label>
+                                        <select name="payment_type" id="payment_type" class="form-select form-select-sm">
+                                            <option value="">Select Payment Type</option>
+                                            @foreach (['Cash', 'Other Insurance', 'Compassionate', 'SHA + Other', 'SHA'] as $payment)
+                                                <option value="{{ $payment }}" {{ old('payment_type') == $payment ? 'selected' : '' }}>{{ $payment }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="sha_procedure" class="form-label small" data-bs-toggle="tooltip" title="Procedure code for SHA insurance">SHA Procedure</label>
+                                        <input type="text" name="sha_procedure" id="sha_procedure" class="form-control form-control-sm" value="{{ old('sha_procedure') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="sha_code" class="form-label small">SHA Code</label>
+                                        <input type="text" name="sha_code" id="sha_code" class="form-control form-control-sm" value="{{ old('sha_code') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="cpt_code" class="form-label small">CPT Code</label>
+                                        <input type="text" name="cpt_code" id="cpt_code" class="form-control form-control-sm" value="{{ old('cpt_code') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="sha_approved_amount" class="form-label small">SHA Approved Amount</label>
+                                        <input type="number" name="sha_approved_amount" id="sha_approved_amount" class="form-control form-control-sm" value="{{ old('sha_approved_amount') }}" step="0.01" min="0">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="sha_expiry_date" class="form-label small">SHA Expiry Date</label>
+                                        <input type="date" name="sha_expiry_date" id="sha_expiry_date" class="form-control form-control-sm" value="{{ old('sha_expiry_date') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="secondary_payer" class="form-label small">Secondary Payer</label>
+                                        <select name="secondary_payer" id="secondary_payer" class="form-select form-select-sm">
+                                            <option value="">Select Payer</option>
+                                            @foreach (['AAP Insurance', 'Britam Insurance', 'First Assurance Insurance', 'GA Insurance', 'Jubilee Insurance', 'None'] as $payer)
+                                                <option value="{{ $payer }}" {{ old('secondary_payer') == $payer ? 'selected' : '' }}>{{ $payer }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="second_payer_approved_amount" class="form-label small">Second Payer Approved Amount</label>
+                                        <input type="number" name="second_payer_approved_amount" id="second_payer_approved_amount" class="form-control form-control-sm" value="{{ old('second_payer_approved_amount') }}" step="0.01" min="0">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="date_deposit_paid" class="form-label small">Date Deposit Paid</label>
+                                        <input type="date" name="date_deposit_paid" id="date_deposit_paid" class="form-control form-control-sm" value="{{ old('date_deposit_paid') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="deposit_amount" class="form-label small">Deposit Amount</label>
+                                        <input type="number" name="deposit_amount" id="deposit_amount" class="form-control form-control-sm" value="{{ old('deposit_amount') }}" step="0.01" min="0">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="sha_eligible" class="form-label small" data-bs-toggle="tooltip" title="Check if eligible for SHA coverage">SHA Eligible</label>
+                                        <input type="checkbox" name="sha_eligible" id="sha_eligible" class="form-check-input" {{ old('sha_eligible') ? 'checked' : '' }} value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#additionalDetails" aria-expanded="false" aria-controls="additionalDetails">
+                                Additional Details
+                            </button>
+                        </h2>
+                        <div id="additionalDetails" class="accordion-collapse collapse" data-bs-parent="#bookingAccordion">
+                            <div class="accordion-body">
+                                <div class="row g-2">
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="department" class="form-label small">Department</label>
+                                        <select name="department" id="department" class="form-select form-select-sm">
+                                            <option value="">Select Department</option>
+                                            @foreach (['General Surgery', 'Orthopedics', 'Neurosurgery', 'Cardiology', 'Other'] as $dept)
+                                                <option value="{{ $dept }}" {{ old('department', $surgery->Department ?? '') == $dept ? 'selected' : '' }}>{{ $dept }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="surgeon" class="form-label small">Surgeon</label>
+                                        <input type="text" name="surgeon" id="surgeon" class="form-control form-control-sm" value="{{ old('surgeon', $surgery->Consultant ?? '') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="second_surgeon" class="form-label small">Second Surgeon</label>
+                                        <input type="text" name="second_surgeon" id="second_surgeon" class="form-control form-control-sm" value="{{ old('second_surgeon') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="post_op_location" class="form-label small">Post-Op Location</label>
+                                        <select name="post_op_location" id="post_op_location" class="form-select form-select-sm">
+                                            <option value="">Select Location</option>
+                                            @foreach (['Ward', 'ICU', 'Recovery Room', 'Outpatient'] as $location)
+                                                <option value="{{ $location }}" {{ old('post_op_location') == $location ? 'selected' : '' }}>{{ $location }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="special_needs" class="form-label small">Special Needs</label>
+                                        <input type="text" name="special_needs" id="special_needs" class="form-control form-control-sm" value="{{ old('special_needs') }}" placeholder="e.g., Wheelchair access">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="requires_anesthesia_clearance" class="form-label small">Requires Anesthesia Clearance</label>
+                                        <input type="checkbox" name="requires_anesthesia_clearance" id="requires_anesthesia_clearance" class="form-check-input" {{ old('requires_anesthesia_clearance') ? 'checked' : '' }} value="1">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="anesthesia_clearance_notes" class="form-label small">Anesthesia Clearance Notes</label>
+                                        <textarea name="anesthesia_clearance_notes" id="anesthesia_clearance_notes" class="form-control form-control-sm" rows="2">{{ old('anesthesia_clearance_notes') }}</textarea>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="icd10_code" class="form-label small" data-bs-toggle="tooltip" title="International Classification of Diseases code">ICD10 Code</label>
+                                        <input type="text" name="icd10_code" id="icd10_code" class="form-control form-control-sm" value="{{ old('icd10_code') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="department_additional" class="form-label small">Additional Department</label>
+                                        <select name="department_additional" id="department_additional" class="form-select form-select-sm">
+                                            <option value="">Select Additional Dept</option>
+                                            @foreach (['None', 'Radiology', 'Pathology', 'Anesthesiology'] as $dept)
+                                                <option value="{{ $dept }}" {{ old('department_additional') == $dept ? 'selected' : '' }}>{{ $dept }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="appointment_id" class="form-label small">Appointment ID</label>
+                                        <input type="text" name="appointment_id" id="appointment_id" class="form-control form-control-sm" value="{{ old('appointment_id') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="entry_date" class="form-label small">Entry Date</label>
+                                        <input type="date" name="entry_date" id="entry_date" class="form-control form-control-sm" value="{{ old('entry_date') }}" readonly>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="attachments" class="form-label small" data-bs-toggle="tooltip" title="Upload relevant documents (PDF, JPG, PNG)">Attachments</label>
+                                        <input type="file" name="attachments[]" id="attachments" class="form-control form-control-sm" multiple>
+                                        <div class="file-upload-info mt-1">No files selected</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancellation -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cancellation" aria-expanded="false" aria-controls="cancellation">
+                                Cancellation
+                            </button>
+                        </h2>
+                        <div id="cancellation" class="accordion-collapse collapse" data-bs-parent="#bookingAccordion">
+                            <div class="accordion-body">
+                                <div class="row g-2">
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="cancellation_reason" class="form-label small">Cancellation Reason</label>
+                                        <input type="text" name="cancellation_reason" id="cancellation_reason" class="form-control form-control-sm" value="{{ old('cancellation_reason') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="cancellation_type" class="form-label small">Cancellation Type</label>
+                                        <input type="text" name="cancellation_type" id="cancellation_type" class="form-control form-control-sm" value="{{ old('cancellation_type') }}">
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="cancelled_at" class="form-label small">Cancelled At</label>
+                                        <input type="date" name="cancelled_at" id="cancelled_at" class="form-control form-control-sm" value="{{ old('cancelled_at') }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 d-flex gap-2">
+                    <button type="submit" name="action" value="save" class="btn btn-primary btn-sm">Save</button>
+                    <button type="submit" name="action" value="draft" class="btn btn-outline-primary btn-sm">Save as Draft</button>
+                   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // File upload feedback
+        const fileInput = document.getElementById('attachments');
+        const fileInfo = document.querySelector('.file-upload-info');
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                fileInfo.textContent = `${this.files.length} file${this.files.length > 1 ? 's' : ''} selected`;
+            } else {
+                fileInfo.textContent = 'No files selected';
+            }
+        });
+
+        // Toggle readonly for patient info fields
+        const toggleButton = document.getElementById('toggleEditPatientInfo');
+        const readonlyFields = ['session_number', 'full_name', 'mrn', 'session_date', 'theatre_request_date'].map(id => document.getElementById(id));
+        
+        toggleButton.addEventListener('click', function () {
+            const isEditable = toggleButton.classList.toggle('active');
+            toggleButton.textContent = isEditable ? 'Lock Patient Info' : 'Edit Patient Info';
+            readonlyFields.forEach(field => {
+                if (isEditable) {
+                    field.removeAttribute('readonly');
+                    field.classList.remove('readonly-field');
+                } else {
+                    field.setAttribute('readonly', 'readonly');
+                    field.classList.add('readonly-field');
+                }
+            });
+        });
+    });
+</script>
+@endsection

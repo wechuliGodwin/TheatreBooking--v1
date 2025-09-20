@@ -11,16 +11,17 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Surgery Details for {{ $surgery->PreferredName }}</h5>
                     <div class="btn-group" role="group">
-                        <a href="#" class="btn btn-sm btn-outline-primary btn-action">Book</a>
+                        <a href="{{ route('surgery.book', urlencode($surgery->SessionNumber)) }}" class="btn btn-sm btn-outline-primary btn-action">Book</a>
                         <a href="#" class="btn btn-sm btn-outline-danger btn-action">Cancel</a>
-                        <a href="{{ route('requested_surgeries.index') }}" class="btn btn-sm btn-outline-secondary btn-action">Back to List</a>
+                        <a href="{{ url()->previous() }}" class="btn btn-sm btn-outline-secondary btn-action">Back to List</a>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <img src="{{ asset('img/avator/user.png') }}" class="rounded-circle mb-3" alt="Patient Avatar" width="100" height="100">
-                            <h6 class="fw-bold">{{ $surgery->PreferredName }}</h6>
+                            <h6 class="fw-bold">Pt. Name: {{ $surgery->PatientName }}</h6>
+                            <h6 class="fw-bold">Surgery: {{ $surgery->PreferredName }}</h6>
                             <small class="text-muted">Requested On: {{ $surgery->Requested_on ? \Carbon\Carbon::parse($surgery->Requested_on)->format('M d, Y') : 'N/A' }}</small>
                         </div>
                         <div class="col-md-9">

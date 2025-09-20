@@ -286,37 +286,38 @@
             </a>
         </nav>
         <nav class="nav flex-column">
-            <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#needSurgerySubmenu" aria-expanded="false">
+            <a class="nav-link" href="{{ route('requested_surgeries.index', 'Booking') }}">
                 <i class="fas fa-chart-bar"></i>
                 <span>Need Surgery</span>
             </a>
-            <ul class="nav-group-items collapse" id="needSurgerySubmenu">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('requested_surgeries.index') }}">
-                        <span class="nav-icon-bullet"></span>
-                        Appointments
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Cancelled Appointments
-                    </a>
-                </li>
-            </ul>
         </nav>
         <nav class="nav flex-column">
+            <a class="nav-link" href="{{ route('requested_surgeries.index', 'Operation') }}">
+                <i class="fas fa-chart-bar"></i>
+                <span>Operation</span>
+            </a>
+        </nav>
+
+        <nav class="nav flex-column">
+            <a class="nav-link" href="#">
+                <i class="fas fa-chart-bar"></i>
+                <span>Urgent Surgery</span>
+            </a>
+        </nav>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="#">
+                <i class="fas fa-chart-bar"></i>
+                <span>Elective Surgery</span>
+            </a>
+        </nav>
+
+        <!-- <nav class="nav flex-column">
             <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#theatreStatusSubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
                 <span>Theatre Status</span>
             </a>
             <ul class="nav-group-items collapse" id="theatreStatusSubmenu">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Add New Request
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <span class="nav-icon-bullet"></span>
@@ -365,12 +366,12 @@
                         Cancelled
                     </a>
                 </li>
-            </ul>
-            <a class="nav-link" href="#">
-                <i class="fas fa-users"></i>
-                <span>Finalized Surgeries</span>
-            </a>
-            <nav class="nav flex-column">
+            </ul> -->
+        <a class="nav-link" href="#">
+            <i class="fas fa-users"></i>
+            <span>Finalized Surgeries</span>
+        </a>
+        <!-- <nav class="nav flex-column">
                 <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#pinkFormSubmenu" aria-expanded="false">
                     <i class="fas fa-chart-bar"></i>
                     <span>Pink Form</span>
@@ -395,7 +396,7 @@
                         </a>
                     </li>
                 </ul>
-            </nav>
+            </nav> -->
         </nav>
         <nav class="nav flex-column">
             <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
