@@ -49,12 +49,14 @@ class TheatreRepository
         $params = [$startDate, date('Y-m-d', strtotime($endDate) + 86400)];
 
         if ($status) {
-            $sql .= " AND a.Status = ?";
-            $params[] = $status;
+            // Use case-insensitive comparison for Status
+            $sql .= " AND UPPER(a.Status) = ?";
+            $params[] = strtoupper($status);
         }
 
         if ($billingApproved !== null) {
-            $sql .= " AND a.BillingApproved = ?";
+            // Handle NULL values in BillingApproved to match PHP loose comparison
+            $sql .= " AND (a.BillingApproved = ? OR a.BillingApproved IS NULL)";
             $params[] = $billingApproved;
         }
 
@@ -66,7 +68,18 @@ class TheatreRepository
 
         $sql .= " ORDER BY a.SessionDate DESC";
 
-        return DB::connection($this->connection)->select($sql, $params);
+        $results = DB::connection($this->connection)->select($sql, $params);
+
+        // Log the query, parameters, and detailed results
+        Log::info('getBookingsByDateRange Query', [
+            'sql' => $sql,
+            'params' => $params,
+            'result_count' => count($results),
+            'status_values' => array_unique(array_map(fn($r) => $r->Status, $results)),
+            'billing_approved_values' => array_unique(array_map(fn($r) => $r->BillingApproved ?? 'NULL', $results)),
+        ]);
+
+        return $results;
     }
 
     public function getBookingBySessionNumber($sessionNumber)
@@ -104,11 +117,15 @@ class TheatreRepository
             WHERE a.SessionNumber = ?
         ";
 
-
-        Log::info('Querying SessionNumber: ' . $sessionNumber); // Add logging
+        Log::info('Querying SessionNumber: ' . $sessionNumber);
         $results = DB::connection($this->connection)->select($sql, [$sessionNumber]);
 
-        Log::info('Query Results: ', (array) $results); // Log results
+        Log::info('getBookingBySessionNumber Results', [
+            'sessionNumber' => $sessionNumber,
+            'result_count' => count($results),
+            'results' => (array) $results,
+        ]);
+
         return $results ? $results[0] : null;
     }
 }

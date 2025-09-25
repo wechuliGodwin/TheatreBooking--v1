@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - @yield('title', 'Dashboard')</title>
+    <meta name="csrf-token" content="...">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -285,92 +286,39 @@
                 <span>Dashboard</span>
             </a>
         </nav>
-        <nav class="nav flex-column">
+        <!-- <nav class="nav flex-column">
             <a class="nav-link" href="{{ route('requested_surgeries.index', 'Booking') }}">
                 <i class="fas fa-chart-bar"></i>
                 <span>Need Surgery</span>
             </a>
-        </nav>
-        <nav class="nav flex-column">
-            <a class="nav-link" href="{{ route('requested_surgeries.index', 'Operation') }}">
-                <i class="fas fa-chart-bar"></i>
-                <span>Operation</span>
-            </a>
-        </nav>
+        </nav> -->
+
 
         <nav class="nav flex-column">
-            <a class="nav-link" href="#">
-                <i class="fas fa-chart-bar"></i>
-                <span>Urgent Surgery</span>
-            </a>
-        </nav>
-        <nav class="nav flex-column">
-            <a class="nav-link" href="#">
-                <i class="fas fa-chart-bar"></i>
-                <span>Elective Surgery</span>
-            </a>
-        </nav>
-
-        <!-- <nav class="nav flex-column">
             <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#theatreStatusSubmenu" aria-expanded="false">
                 <i class="fas fa-chart-bar"></i>
                 <span>Theatre Status</span>
             </a>
             <ul class="nav-group-items collapse" id="theatreStatusSubmenu">
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        SHA Submitted, Pending Approval
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Ready to Schedule
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Scheduled
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Rescheduled
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Completed
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        SHA Rejected
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Inactive
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="nav-icon-bullet"></span>
-                        Cancelled
-                    </a>
-                </li>
-            </ul> -->
+                @foreach (['Need Surgery', 'SHA Submitted; Pending Approval', 'Insurance Approved/Deposit Paid; Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected', 'Cancelled'] as $status)
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('surgeries.filter', ['status' => $status]) }}">
+                            <span class="nav-icon-bullet"></span>
+                            {{ $status }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
         <a class="nav-link" href="#">
             <i class="fas fa-users"></i>
             <span>Finalized Surgeries</span>
         </a>
+
+         <!-- <a class="nav-link" href="{{ route('surgeries.filter', ['status' => 'Cancelled']) }}">
+        <i class="fas fa-ban"></i>
+        <span>Cancelled Appointments</span> -->
+    </a>
+
         <!-- <nav class="nav flex-column">
                 <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#pinkFormSubmenu" aria-expanded="false">
                     <i class="fas fa-chart-bar"></i>
