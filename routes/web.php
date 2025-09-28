@@ -27,6 +27,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/surgery/update/{id}', [SurgeryController::class, 'update'])->name('surgery.update');
     Route::post('/surgery/store', [SurgeryController::class, 'store'])->name('booked_theatre.store');
     Route::delete('/surgeries/{id}', [SurgeryController::class, 'destroy'])->name('surgeries.destroy');
+    Route::post('/surgery/reschedule/{id}', [SurgeryController::class, 'reschedule'])->name('surgery.reschedule');
+    Route::get('/surgeries/rescheduled', [SurgeryController::class, 'rescheduledAppointments'])->name('surgeries.rescheduled');
+    Route::get('/surgeries/rescheduled/export-csv', [SurgeryController::class, 'exportRescheduledAppointmentsCsv'])->name('surgeries.rescheduled.export_csv');
+    Route::get('/surgeries/cancelled/export-csv', [SurgeryController::class, 'exportCancelledSurgeriesCsv'])->name('surgeries.cancelled.export_csv');
+    Route::get('/surgeries/finalized', [DashboardController::class, 'finalizedSurgeries'])->name('surgeries.finalized');
     
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 

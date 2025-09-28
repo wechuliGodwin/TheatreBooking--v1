@@ -1,4 +1,3 @@
-
 @extends('layout.app')
 
 @section('title', 'Register Theatre Booking')
@@ -64,14 +63,11 @@
                             <label for="patient_number" class="form-label small">Patient Number</label>
                             <input type="text" name="patient_number" id="patient_number" class="form-control form-control-sm {{ $surgery ? 'readonly-field' : '' }}" value="{{ old('patient_number', $surgery->PatientNumber ?? '') }}" {{ $surgery ? 'readonly' : '' }}>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-12">
+                        <!-- <div class="col-lg-3 col-md-6 col-12">
                             <label for="session_date" class="form-label small">Session Date</label>
                             <input type="date" name="session_date" id="session_date" class="form-control form-control-sm {{ $surgery ? 'readonly-field' : '' }}" value="{{ old('session_date', $surgery->booking_date ?? '') }}" {{ $surgery ? 'readonly' : '' }}>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-12">
-                            <label for="theatre_request_date" class="form-label small">Theatre Request Date</label>
-                            <input type="date" name="theatre_request_date" id="theatre_request_date" class="form-control form-control-sm {{ $surgery ? 'readonly-field' : '' }}" value="{{ old('theatre_request_date', $surgery->Requested_on ?? '') }}" {{ $surgery ? 'readonly' : '' }}>
-                        </div>
+                        </div> -->
+                        
                         <div class="col-lg-3 col-md-6 col-12">
                             <label for="phone_numbers" class="form-label small" data-bs-toggle="tooltip" title="Enter patient's contact numbers">Phone Numbers</label>
                             <input type="text" name="phone_numbers" id="phone_numbers" class="form-control form-control-sm" value="{{ old('phone_numbers', $surgery->phone_numbers ?? '') }}">
@@ -79,6 +75,23 @@
                         <div class="col-lg-3 col-md-6 col-12">
                             <label for="age" class="form-label small">Age</label>
                             <input type="number" name="age" id="age" class="form-control form-control-sm" value="{{ old('age', $surgery->Age ?? $surgery->age ?? '') }}" min="0">
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="surgery_type" class="form-label small">Surgery Type</label>
+                                        <select name="surgery_type" id="surgery_type" class="form-select form-select-sm">
+                                            <option value="">Select Type</option>
+                                            @php
+                                                $selectedType = old('surgery_type', $surgery->surgery_type ?? $surgery->SessionType ?? '');
+                                            @endphp
+                                            @foreach (['Elective','Urgent','Emergency', 'Minor', 'Major'] as $type)
+                                                <option value="{{ $type }}" {{ $selectedType === $type ? 'selected' : '' }}>{{ $type }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-12">
+                            <label for="theatre_request_date" class="form-label small">Theatre Request Date</label>
+                            <input type="date" name="theatre_request_date" id="theatre_request_date" class="form-control form-control-sm {{ $surgery ? 'readonly-field' : '' }}" value="{{ old('theatre_request_date', $surgery->Requested_on ?? '') }}" {{ $surgery ? 'readonly' : '' }}>
                         </div>
                     </div>
                 </div>
@@ -115,15 +128,7 @@
                                         <label for="surgery" class="form-label small">Surgery</label>
                                         <input type="text" name="surgery" id="surgery" class="form-control form-control-sm" value="{{ old('surgery', $surgery->surgery ?? $surgery->theatre_procedure_requested ?? '') }}">
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="surgery_type" class="form-label small">Surgery Type</label>
-                                        <select name="surgery_type" id="surgery_type" class="form-select form-select-sm">
-                                            <option value="">Select Type</option>
-                                            @foreach (['Elective', 'Emergency', 'Minor', 'Major'] as $type)
-                                                <option value="{{ $type }}" {{ old('surgery_type', $surgery->surgery_type ?? $surgery->SessionType ?? '') == $type ? 'selected' : '' }}>{{ $type }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="surgery_category" class="form-label small">Surgery Category</label>
                                         <input type="text" name="surgery_category" id="surgery_category" class="form-control form-control-sm" value="{{ old('surgery_category', $surgery->surgery_category ?? '') }}">
@@ -140,7 +145,7 @@
                                         <label for="theatre_room" class="form-label small">Theatre Room</label>
                                         <select name="theatre_room" id="theatre_room" class="form-select form-select-sm">
                                             <option value="">Select Room</option>
-                                            @foreach (['Room1', 'Room2', 'Room3', 'Room4', 'Other'] as $room)
+                                            @foreach (['Room1', 'Room2', 'Room3', 'Room4','OPERATION ROOM 1','OPERATION ROOM 2','OPERATION ROOM 3','OPERATION ROOM 4','OPERATION ROOM 5','OPERATION ROOM 6','Other'] as $room)
                                                 <option value="{{ $room }}" {{ old('theatre_room', $surgery->theatre_room ?? $surgery->OperationRoom ?? '') == $room ? 'selected' : '' }}>{{ $room }}</option>
                                             @endforeach
                                         </select>
@@ -339,8 +344,8 @@
                 </div>
 
                 <div class="mt-3 d-flex gap-2">
-                    <button type="submit" name="action" value="save" class="btn btn-primary btn-sm">Save</button>
-                    <button type="submit" name="action" value="draft" class="btn btn-outline-primary btn-sm">Save as Draft</button>
+                    <button type="submit" name="action" value="save" class="btn btn-primary btn-sm">Submit</button>
+                    <!-- <button type="submit" name="action" value="draft" class="btn btn-outline-primary btn-sm">Save as Draft</button> -->
                 </div>
             </form>
         </div>

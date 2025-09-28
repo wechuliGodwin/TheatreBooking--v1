@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Surgeries;
+use App\Models\SurgeryReschedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SurgeryController extends Controller
 {
@@ -54,7 +59,7 @@ class SurgeryController extends Controller
             'full_name' => 'nullable|string|max:255',
             'patient_number' => 'nullable|string|max:255',
             'phone_numbers' => 'nullable|string|max:255',
-            'theatre_room' => 'nullable|in:Room1,Room2,Room3,Room4,Other',
+            'theatre_room' => 'nullable|in:Room1,Room2,Room3,Room4,OPERATION ROOM 1,OPERATION ROOM 2,OPERATION ROOM 3,OPERATION ROOM 4,OPERATION ROOM 5,OPERATION ROOM 6,Other',
             'age' => 'nullable|integer',
             'scheduling_status' => 'nullable|in:Need Surgery,SHA Submitted; Pending Approval,Insurance Approved/Deposit Paid; Ready to Schedule,Scheduled,Completed,Inactive,SHA Rejected',
             'booking_status' => 'nullable|string|max:255',
@@ -62,7 +67,7 @@ class SurgeryController extends Controller
             'diagnosis' => 'nullable|string',
             'surgery' => 'nullable|string',
             'urgent_cancer' => 'nullable|boolean',
-            'surgery_type' => 'nullable|in:Elective,Emergency,Minor,Major',
+            'surgery_type' => 'nullable|in:Elective,Urgent,Emergency,Minor,Major',
             'surgery_category' => 'nullable|string|max:255',
             'proposed_date_of_surgery' => 'nullable|date',
             'date_of_surgery' => 'nullable|date',
@@ -131,7 +136,7 @@ class SurgeryController extends Controller
             // Log error
             Log::error('Failed to save surgery record', [
                 'session_number' => $request->session_number,
-                'error' => $e->getMessage(),
+                'error' => $e->getMessage()
             ]);
             return redirect()->back()->with('error', 'Failed to save surgery record: ' . $e->getMessage());
         }
@@ -171,7 +176,7 @@ class SurgeryController extends Controller
             'full_name' => 'nullable|string|max:255',
             'patient_number' => 'nullable|string|max:255',
             'phone_numbers' => 'nullable|string|max:255',
-            'theatre_room' => 'nullable|in:Room1,Room2,Room3,Room4,Other',
+            'theatre_room' => 'nullable|in:Room1,Room2,Room3,Room4,OPERATION ROOM 1,OPERATION ROOM 2,OPERATION ROOM 3,OPERATION ROOM 4,OPERATION ROOM 5,OPERATION ROOM 6,Other',
             'age' => 'nullable|integer',
             'scheduling_status' => 'required|in:SHA Submitted; Pending Approval,Insurance Approved/Deposit Paid; Ready to Schedule,Scheduled,Completed,Inactive,SHA Rejected,Cancelled',
             'booking_status' => 'nullable|string|max:255',
@@ -179,7 +184,7 @@ class SurgeryController extends Controller
             'diagnosis' => 'nullable|string',
             'surgery' => 'nullable|string',
             'urgent_cancer' => 'nullable|boolean',
-            'surgery_type' => 'nullable|in:Elective,Emergency,Minor,Major',
+            'surgery_type' => 'nullable|in:Elective,Urgent,Emergency,Minor,Major',
             'surgery_category' => 'nullable|string|max:255',
             'proposed_date_of_surgery' => 'nullable|date',
             'date_of_surgery' => 'nullable|date',
@@ -252,150 +257,150 @@ class SurgeryController extends Controller
     }
 
     public function filterByStatus(Request $request)
-{
-    $status = $request->input('status', 'Need Surgery');
-    $query = $request->input('query');
-    $start_date = $request->input('start_date', now()->subDays(30)->toDateString());
-    $end_date = $request->input('end_date', now()->toDateString());
-    $cancellation_type = $request->input('cancellation_type');
+    {
+        $status = $request->input('status', 'Need Surgery');
+        $query = $request->input('query');
+        $start_date = $request->input('start_date', now()->subDays(30)->toDateString());
+        $end_date = $request->input('end_date', now()->toDateString());
+        $cancellation_type = $request->input('cancellation_type');
 
-    // Initialize collection for surgeries
-    $surgeries = collect();
+        // Initialize collection for surgeries
+        $surgeries = collect();
 
-    // Initialize variables to avoid undefined errors
-    $localSessionNumbers = [];
-    $remoteSurgeries = [];
-    $filteredRemoteSurgeries = [];
+        // Initialize variables to avoid undefined errors
+        $localSessionNumbers = [];
+        $remoteSurgeries = [];
+        $filteredRemoteSurgeries = [];
 
-    // Fetch local surgeries
-    $localQuery = Surgeries::query();
-    if ($status === 'Cancelled') {
-        $localQuery->whereNotNull('cancelled_at');
-    } else {
-        $localQuery->where('scheduling_status', $status);
-    }
-    $localQuery->when($query, function ($q, $searchTerm) {
-        return $q->where(function ($subQ) use ($searchTerm) {
-            $subQ->where('session_number', 'like', '%' . $searchTerm . '%')
-                ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('patient_number', 'like', '%' . $searchTerm . '%')
-                ->orWhere('surgeon', 'like', '%' . $searchTerm . '%');
-        });
-    })->whereBetween('created_at', [$start_date, $end_date . ' 23:59:59'])
-        ->orderBy('created_at', 'desc');
+        // Fetch local surgeries
+        $localQuery = Surgeries::query();
+        if ($status === 'Cancelled') {
+            $localQuery->whereNotNull('cancelled_at');
+        } else {
+            $localQuery->where('scheduling_status', $status);
+        }
+        $localQuery->when($query, function ($q, $searchTerm) {
+            return $q->where(function ($subQ) use ($searchTerm) {
+                $subQ->where('session_number', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('patient_number', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('surgeon', 'like', '%' . $searchTerm . '%');
+            });
+        })->whereBetween('created_at', [$start_date, $end_date . ' 23:59:59'])
+            ->orderBy('created_at', 'desc');
 
-    $surgeries = $surgeries->concat($localQuery->get());
+        $surgeries = $surgeries->concat($localQuery->get());
 
-    // For 'Need Surgery', also fetch remote surgeries
-    if ($status === 'Need Surgery') {
-        $remoteSurgeries = $this->theatreRepository->getBookingsByDateRange($start_date, $end_date, $query, 'BOOKING', 0);
+        // For 'Need Surgery', also fetch remote surgeries
+        if ($status === 'Need Surgery') {
+            $remoteSurgeries = $this->theatreRepository->getBookingsByDateRange($start_date, $end_date, $query, 'BOOKING', 0);
 
-        // Get all local session numbers to filter remote records, normalize to lowercase and trim
-        $localSessionNumbers = Surgeries::pluck('session_number')->map(function ($sessionNumber) {
-            return $sessionNumber ? strtolower(trim($sessionNumber)) : null;
-        })->filter()->toArray();
+            // Get all local session numbers to filter remote records, normalize to lowercase and trim
+            $localSessionNumbers = Surgeries::pluck('session_number')->map(function ($sessionNumber) {
+                return $sessionNumber ? strtolower(trim($sessionNumber)) : null;
+            })->filter()->toArray();
 
-        // Filter out remote surgeries that already exist in local database
-        $filteredRemoteSurgeries = array_filter($remoteSurgeries, function ($surgery) use ($localSessionNumbers) {
-            $remoteSessionNumber = $surgery->SessionNumber ? strtolower(trim($surgery->SessionNumber)) : null;
-            return $remoteSessionNumber && !in_array($remoteSessionNumber, $localSessionNumbers);
-        });
+            // Filter out remote surgeries that already exist in local database
+            $filteredRemoteSurgeries = array_filter($remoteSurgeries, function ($surgery) use ($localSessionNumbers) {
+                $remoteSessionNumber = $surgery->SessionNumber ? strtolower(trim($surgery->SessionNumber)) : null;
+                return $remoteSessionNumber && !in_array($remoteSessionNumber, $localSessionNumbers);
+            });
 
-        // Map remote surgeries to match local surgery structure
-        $mappedRemoteSurgeries = collect($filteredRemoteSurgeries)->map(function ($surgery) {
-            return (object) [
-                'id' => null,
-                'session_number' => $surgery->SessionNumber,
-                'session_date' => $surgery->booking_date,
-                'theatre_request_date' => $surgery->Requested_on,
-                'full_name' => $surgery->PatientName,
-                'patient_number' => $surgery->PatientNumber,
-                'phone_numbers' => null,
-                'theatre_room' => $surgery->OperationRoom,
-                'age' => $surgery->Age,
-                'scheduling_status' => 'Need Surgery',
-                'booking_status' => $surgery->Status,
-                'notes_comments' => null,
-                'diagnosis' => $surgery->PreferredName,
-                'surgery' => $surgery->theatre_procedure_requested,
-                'urgent_cancer' => null,
-                'surgery_type' => $surgery->SessionType,
-                'surgery_category' => null,
-                'proposed_date_of_surgery' => null,
-                'date_of_surgery' => null,
-                'payment_type' => null,
-                'sha_procedure' => null,
-                'sha_code' => null,
-                'cpt_code' => null,
-                'sha_approved_amount' => null,
-                'sha_expiry_date' => null,
-                'secondary_payer' => null,
-                'second_payer_approved_amount' => null,
-                'length_of_surgery' => null,
-                'date_deposit_paid' => null,
-                'special_needs' => null,
-                'department' => null,
-                'surgeon' => $surgery->Consultant,
-                'deposit_amount' => null,
-                'post_op_location' => null,
-                'requires_anesthesia_clearance' => null,
-                'anesthesia_clearance_notes' => null,
-                'case_order' => null,
-                'sha_eligible' => null,
-                'icd10_code' => null,
-                'department_additional' => null,
-                'second_surgeon' => null,
-                'attachments' => null,
-                'appointment_id' => null,
-                'entry_date' => null,
-                'cancellation_reason' => null,
-                'cancellation_type' => null,
-                'cancelled_at' => null,
-                'created_at' => null,
-            ];
-        });
-        $surgeries = $surgeries->concat($mappedRemoteSurgeries);
-    }
+            // Map remote surgeries to match local surgery structure
+            $mappedRemoteSurgeries = collect($filteredRemoteSurgeries)->map(function ($surgery) {
+                return (object) [
+                    'id' => null,
+                    'session_number' => $surgery->SessionNumber,
+                    'session_date' => $surgery->booking_date,
+                    'theatre_request_date' => $surgery->Requested_on,
+                    'full_name' => $surgery->PatientName,
+                    'patient_number' => $surgery->PatientNumber,
+                    'phone_numbers' => null,
+                    'theatre_room' => $surgery->OperationRoom,
+                    'age' => $surgery->Age,
+                    'scheduling_status' => 'Need Surgery',
+                    'booking_status' => $surgery->Status,
+                    'notes_comments' => null,
+                    'diagnosis' => $surgery->PreferredName,
+                    'surgery' => $surgery->theatre_procedure_requested,
+                    'urgent_cancer' => null,
+                    'surgery_type' => $surgery->SessionType,
+                    'surgery_category' => null,
+                    'proposed_date_of_surgery' => null,
+                    'date_of_surgery' => null,
+                    'payment_type' => null,
+                    'sha_procedure' => null,
+                    'sha_code' => null,
+                    'cpt_code' => null,
+                    'sha_approved_amount' => null,
+                    'sha_expiry_date' => null,
+                    'secondary_payer' => null,
+                    'second_payer_approved_amount' => null,
+                    'length_of_surgery' => null,
+                    'date_deposit_paid' => null,
+                    'special_needs' => null,
+                    'department' => null,
+                    'surgeon' => $surgery->Consultant,
+                    'deposit_amount' => null,
+                    'post_op_location' => null,
+                    'requires_anesthesia_clearance' => null,
+                    'anesthesia_clearance_notes' => null,
+                    'case_order' => null,
+                    'sha_eligible' => null,
+                    'icd10_code' => null,
+                    'department_additional' => null,
+                    'second_surgeon' => null,
+                    'attachments' => null,
+                    'appointment_id' => null,
+                    'entry_date' => null,
+                    'cancellation_reason' => null,
+                    'cancellation_type' => null,
+                    'cancelled_at' => null,
+                    'created_at' => null,
+                ];
+            });
+            $surgeries = $surgeries->concat($mappedRemoteSurgeries);
+        }
 
-    // Sort combined collection by date (handle null created_at for remote records)
-    $surgeries = $surgeries->sortByDesc(function ($surgery) {
-        return $surgery->created_at ? $surgery->created_at->timestamp : ($surgery->session_date ? strtotime($surgery->session_date) : 0);
-    })->values();
+        // Sort combined collection by date (handle null created_at for remote records)
+        $surgeries = $surgeries->sortByDesc(function ($surgery) {
+            return $surgery->created_at ? $surgery->created_at->timestamp : ($surgery->session_date ? strtotime($surgery->session_date) : 0);
+        })->values();
 
-    Log::info('Filtered surgeries by status', [
-        'status' => $status,
-        'query' => $query,
-        'start_date' => $start_date,
-        'end_date' => $end_date,
-        'total_count' => $surgeries->count(),
-        'local_count' => $localQuery->count(),
-        'remote_count' => $status === 'Need Surgery' ? count($filteredRemoteSurgeries) : 0,
-        'local_session_numbers' => $localSessionNumbers,
-        'remote_session_numbers_before' => $remoteSurgeries ? array_map(fn($s) => $s->SessionNumber, $remoteSurgeries) : [],
-        'remote_session_numbers_after' => $filteredRemoteSurgeries ? array_map(fn($s) => $s->SessionNumber, $filteredRemoteSurgeries) : [],
-    ]);
-
-    if ($status === 'Cancelled') {
-        $cancelledSurgeries = Surgeries::whereNotNull('cancelled_at')
-            ->when($cancellation_type, function ($q) use ($cancellation_type) {
-                $q->where('cancellation_type', $cancellation_type);
-            })
-            ->orderByDesc('cancelled_at')
-            ->get();
-        return view('theatre.surgeries.cancelled_surgeries', [
-            'surgeries' => $cancelledSurgeries,
+        Log::info('Filtered surgeries by status', [
             'status' => $status,
             'query' => $query,
             'start_date' => $start_date,
             'end_date' => $end_date,
-            'cancellation_type' => $cancellation_type, // <-- always pass
+            'total_count' => $surgeries->count(),
+            'local_count' => $localQuery->count(),
+            'remote_count' => $status === 'Need Surgery' ? count($filteredRemoteSurgeries) : 0,
+            'local_session_numbers' => $localSessionNumbers,
+            'remote_session_numbers_before' => $remoteSurgeries ? array_map(fn($s) => $s->SessionNumber, $remoteSurgeries) : [],
+            'remote_session_numbers_after' => $filteredRemoteSurgeries ? array_map(fn($s) => $s->SessionNumber, $filteredRemoteSurgeries) : [],
         ]);
+
+        if ($status === 'Cancelled') {
+            $cancelledSurgeries = Surgeries::whereNotNull('cancelled_at')
+                ->when($cancellation_type, function ($q) use ($cancellation_type) {
+                    $q->where('cancellation_type', $cancellation_type);
+                })
+                ->orderByDesc('cancelled_at')
+                ->get();
+            return view('theatre.surgeries.cancelled_surgeries', [
+                'surgeries' => $cancelledSurgeries,
+                'status' => $status,
+                'query' => $query,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'cancellation_type' => $cancellation_type, // <-- always pass
+            ]);
+        }
+
+        return view('theatre.surgeries.filtered_scheduling_status', compact('surgeries', 'status', 'query', 'start_date', 'end_date'));
     }
 
-    return view('theatre.surgeries.filtered_scheduling_status', compact('surgeries', 'status', 'query', 'start_date', 'end_date'));
-}
-
-public function cancelled(Request $request)
+    public function cancelled(Request $request)
     {
         $query = $request->input('query');
         $start_date = $request->input('start_date');
@@ -414,9 +419,9 @@ public function cancelled(Request $request)
         if ($query) {
             $surgeriesQuery->where(function ($q) use ($query) {
                 $q->where('session_number', 'like', '%' . $query . '%')
-                  ->orWhere('full_name', 'like', '%' . $query . '%')
-                  ->orWhere('patient_number', 'like', '%' . $query . '%')
-                  ->orWhere('surgeon', 'like', '%' . $query . '%');
+                    ->orWhere('full_name', 'like', '%' . $query . '%')
+                    ->orWhere('patient_number', 'like', '%' . $query . '%')
+                    ->orWhere('surgeon', 'like', '%' . $query . '%');
             });
         }
 
@@ -529,4 +534,258 @@ public function cancelled(Request $request)
         }
     }
 
+    public function reschedule(Request $request, $id)
+    {
+        Log::info('Attempting to reschedule surgery.', [
+            'surgery_id' => $id,
+            'request_data' => $request->except(['_token', '_method'])
+        ]);
+
+        $rules = [
+            'date_of_surgery' => 'required|date|after_or_equal:today',
+            'surgery' => 'required|string|max:255',
+            'surgeon' => 'required|string|max:255',
+            'surgery_type' => 'required|in:Elective,Urgent,Emergency,Minor,Major',
+            'surgery_category' => 'nullable|string|max:255',
+            'sha_procedure' => 'nullable|string|max:255',
+            'case_order' => 'nullable|string|max:255',
+            'theatre_room' => 'required|in:Room1,Room2,Room3,Room4,Other',
+            'reason' => 'required|string|max:512',
+        ];
+
+        try {
+            $validated = $request->validate($rules);
+        } catch (ValidationException $e) {
+            Log::warning('Validation failed during surgery reschedule.', [
+                'surgery_id' => $id,
+                'errors' => $e->errors(),
+                'input' => $request->all()
+            ]);
+            return back()->withErrors($e->errors())->withInput();
+        }
+
+        $surgery = Surgeries::findOrFail($id);
+
+        // Only allow reschedule if status is 'Scheduled'
+        if ($surgery->scheduling_status !== 'Scheduled') {
+            Log::warning('Reschedule attempted on non-Scheduled surgery.', [
+                'surgery_id' => $id,
+                'current_status' => $surgery->scheduling_status
+            ]);
+            return back()->with('error', 'Only surgeries with status "Scheduled" can be rescheduled.');
+        }
+
+        // Check if the new date is different from the current date
+        if ($surgery->date_of_surgery == $validated['date_of_surgery']) {
+            Log::warning('Reschedule attempted with same date of surgery.', [
+                'surgery_id' => $id,
+                'current_date' => $surgery->date_of_surgery,
+                'new_date' => $validated['date_of_surgery']
+            ]);
+            return back()->with('error', 'The new surgery date must be different from the current date.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Log current surgery state
+            Log::info('Current surgery state before reschedule', [
+                'surgery_id' => $surgery->id,
+                'current_data' => $surgery->only([
+                    'date_of_surgery',
+                    'surgery',
+                    'surgeon',
+                    'surgery_type',
+                    'surgery_category',
+                    'sha_procedure',
+                    'case_order',
+                    'theatre_room'
+                ])
+            ]);
+
+            // Save reschedule history
+            $reschedule = SurgeryReschedule::create([
+                'surgery_id' => $surgery->id,
+                'previous_date_of_surgery' => $surgery->date_of_surgery,
+                'previous_surgery' => $surgery->surgery,
+                'previous_surgeon' => $surgery->surgeon,
+                'previous_surgery_type' => $surgery->surgery_type,
+                'previous_surgery_category' => $surgery->surgery_category,
+                'previous_sha_procedure' => $surgery->sha_procedure,
+                'previous_case_order' => $surgery->case_order,
+                'previous_theatre_room' => $surgery->theatre_room,
+                'reason' => $validated['reason'],
+                'rescheduled_by' => Auth::id(),
+            ]);
+
+            // Update surgery
+            $updated = $surgery->update([
+                'date_of_surgery' => $validated['date_of_surgery'],
+                'surgery' => $validated['surgery'],
+                'surgeon' => $validated['surgeon'],
+                'surgery_type' => $validated['surgery_type'],
+                'surgery_category' => $validated['surgery_category'],
+                'sha_procedure' => $validated['sha_procedure'],
+                'case_order' => $validated['case_order'],
+                'theatre_room' => $validated['theatre_room'],
+            ]);
+
+            // Log updated surgery state
+            Log::info('Surgery state after reschedule', [
+                'surgery_id' => $surgery->id,
+                'updated' => $updated,
+                'new_data' => $surgery->fresh()->only([
+                    'date_of_surgery',
+                    'surgery',
+                    'surgeon',
+                    'surgery_type',
+                    'surgery_category',
+                    'sha_procedure',
+                    'case_order',
+                    'theatre_room'
+                ])
+            ]);
+
+            if (!$updated) {
+                Log::error('Failed to update surgery record during reschedule.', [
+                    'surgery_id' => $surgery->id
+                ]);
+                throw new \Exception('Failed to update surgery record.');
+            }
+
+            DB::commit();
+            return redirect()->route('surgery.edit', $surgery->id)->with('success', 'Surgery rescheduled successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to reschedule surgery', [
+                'surgery_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+            return back()->withInput()->with('error', 'Failed to reschedule surgery: ' . $e->getMessage());
+        }
+    }
+
+    public function reschedules()
+    {
+        return $this->hasMany(SurgeryReschedule::class, 'surgery_id');
+    }
+
+    public function rescheduledAppointments()
+    {
+        $reschedules = \App\Models\SurgeryReschedule::with(['surgery', 'user'])->latest()->get();
+        return view('theatre.surgeries.rescheduled_appointments', compact('reschedules'));
+    }
+
+    public function exportRescheduledAppointmentsCsv()
+    {
+        $reschedules = \App\Models\SurgeryReschedule::with(['surgery', 'user'])->latest()->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="rescheduled_appointments.csv"',
+        ];
+
+        $columns = [
+            'Patient Name', 'Session Number', 'Patient Number',
+            'Prev Date of Surgery', 'Prev Surgery', 'Prev Surgeon', 'Prev Surgery Type', 'Prev Surgery Category', 'Prev SHA Procedure', 'Prev Case Order', 'Prev Theatre Room',
+            'New Date of Surgery', 'New Surgery', 'New Surgeon', 'New Surgery Type', 'New Surgery Category', 'New SHA Procedure', 'New Case Order', 'New Theatre Room',
+            'Reason', 'Rescheduled By', 'Created At'
+        ];
+
+        $callback = function() use ($reschedules, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($reschedules as $reschedule) {
+                fputcsv($file, [
+                    $reschedule->surgery->full_name ?? '-',
+                    $reschedule->surgery->session_number ?? '-',
+                    $reschedule->surgery->patient_number ?? '-',
+                    $reschedule->previous_date_of_surgery ? $reschedule->previous_date_of_surgery->format('Y-m-d') : '-',
+                    $reschedule->previous_surgery ?? '-',
+                    $reschedule->previous_surgeon ?? '-',
+                    $reschedule->previous_surgery_type ?? '-',
+                    $reschedule->previous_surgery_category ?? '-',
+                    $reschedule->previous_sha_procedure ?? '-',
+                    $reschedule->previous_case_order ?? '-',
+                    $reschedule->previous_theatre_room ?? '-',
+                    $reschedule->surgery->date_of_surgery ? $reschedule->surgery->date_of_surgery->format('Y-m-d') : '-',
+                    $reschedule->surgery->surgery ?? '-',
+                    $reschedule->surgery->surgeon ?? '-',
+                    $reschedule->surgery->surgery_type ?? '-',
+                    $reschedule->surgery->surgery_category ?? '-',
+                    $reschedule->surgery->sha_procedure ?? '-',
+                    $reschedule->surgery->case_order ?? '-',
+                    $reschedule->surgery->theatre_room ?? '-',
+                    $reschedule->reason ?? '-',
+                    $reschedule->user->name ?? '-',
+                    $reschedule->created_at->format('Y-m-d H:i'),
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportCancelledSurgeriesCsv(Request $request)
+    {
+        $query = $request->input('query');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+        $cancellation_type = $request->input('cancellation_type');
+
+        $surgeriesQuery = Surgeries::whereNotNull('cancellation_type');
+        if ($cancellation_type) {
+            $surgeriesQuery->where('cancellation_type', $cancellation_type);
+        }
+        if ($query) {
+            $surgeriesQuery->where(function ($q) use ($query) {
+                $q->where('session_number', 'like', '%' . $query . '%')
+                    ->orWhere('full_name', 'like', '%' . $query . '%')
+                    ->orWhere('patient_number', 'like', '%' . $query . '%')
+                    ->orWhere('surgeon', 'like', '%' . $query . '%');
+            });
+        }
+        if ($start_date) {
+            $surgeriesQuery->whereDate('cancelled_at', '>=', $start_date);
+        }
+        if ($end_date) {
+            $surgeriesQuery->whereDate('cancelled_at', '<=', $end_date);
+        }
+        $surgeries = $surgeriesQuery->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="cancelled_surgeries.csv"',
+        ];
+
+        $columns = [
+            'Session Number', 'Patient Name', 'Patient Number', 'Age', 'Surgery', 'Surgery Type', 'Consultant', 'Theatre Room',
+            'Cancellation Type', 'Cancellation Reason', 'Cancelled At'
+        ];
+
+        $callback = function() use ($surgeries, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($surgeries as $surgery) {
+                fputcsv($file, [
+                    $surgery->session_number ?? 'N/A',
+                    $surgery->full_name ?? 'N/A',
+                    $surgery->patient_number ?? 'N/A',
+                    $surgery->age ?? 'N/A',
+                    $surgery->surgery ?? 'N/A',
+                    $surgery->surgery_type ?? 'N/A',
+                    $surgery->surgeon ?? 'N/A',
+                    $surgery->theatre_room ?? 'N/A',
+                    $surgery->cancellation_type ?? 'N/A',
+                    $surgery->cancellation_reason ?? 'N/A',
+                    $surgery->cancelled_at ? $surgery->cancelled_at->format('Y-m-d') : 'N/A',
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

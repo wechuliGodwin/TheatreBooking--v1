@@ -30,6 +30,7 @@ class DashboardController extends Controller
             'Inactive',
             'SHA Rejected',
             'Cancelled',
+            'Finalized',
         ];
 
         // Initialize counts array
@@ -38,17 +39,14 @@ class DashboardController extends Controller
         // Get all local session numbers to filter remote records
         $localSessionNumbers = Surgeries::pluck('session_number')->toArray();
 
-        // Fetch local surgeries (Surgeries model)
+        // Fetch local and remote surgeries
         foreach ($statuses as $status) {
             if ($status === 'Need Surgery') {
                 // For 'Need Surgery', include remote bookings with Status = 'BOOKING' and BillingApproved = 0 or NULL
                 $remoteSurgeries = $this->theatreRepository->getBookingsByDateRange($start_date, $end_date, null, 'BOOKING', 0);
-
-                // Filter out remote surgeries that already exist in local database
                 $filteredRemoteSurgeries = array_filter($remoteSurgeries, function ($surgery) use ($localSessionNumbers) {
                     return !in_array($surgery->SessionNumber, $localSessionNumbers);
                 });
-
                 $localSurgeries = Surgeries::where('scheduling_status', 'Need Surgery')
                     ->whereBetween('created_at', [$start_date, $end_date . ' 23:59:59'])
                     ->count();
@@ -58,6 +56,13 @@ class DashboardController extends Controller
                 $counts[$status] = Surgeries::whereNotNull('cancelled_at')
                     ->whereBetween('created_at', [$start_date, $end_date . ' 23:59:59'])
                     ->count();
+            } elseif ($status === 'Finalized') {
+                // For 'Finalized', include remote bookings with Status = 'FINALIZED'
+                $remoteFinalizedSurgeries = $this->theatreRepository->getFinalizedBookings($start_date, $end_date);
+                $filteredFinalizedSurgeries = array_filter($remoteFinalizedSurgeries, function ($surgery) use ($localSessionNumbers) {
+                    return !in_array($surgery->SessionNumber, $localSessionNumbers);
+                });
+                $counts[$status] = count($filteredFinalizedSurgeries);
             } else {
                 // Count local surgeries for other statuses
                 $counts[$status] = Surgeries::where('scheduling_status', $status)
@@ -72,14 +77,20 @@ class DashboardController extends Controller
             ->get();
 
         $recentRemoteSurgeries = $this->theatreRepository->getBookingsByDateRange($start_date, $end_date, null, null, null);
-
-        // Filter out remote surgeries that already exist in local database
         $filteredRecentRemoteSurgeries = array_filter($recentRemoteSurgeries, function ($surgery) use ($localSessionNumbers) {
             return !in_array($surgery->SessionNumber, $localSessionNumbers);
         });
 
         // Map remote surgeries to match local Surgeries model structure
         $mappedRemoteSurgeries = collect($filteredRecentRemoteSurgeries)->map(function ($surgery) {
+            $sessionType = $surgery->SessionType;
+            $validSurgeryType = in_array($sessionType, ['Elective', 'Emergency', 'Minor', 'Major']) ? $sessionType : null;
+            if ($sessionType && !$validSurgeryType) {
+                Log::warning('Invalid SessionType from remote data', [
+                    'session_number' => $surgery->SessionNumber,
+                    'session_type' => $sessionType,
+                ]);
+            }
             return (object) [
                 'session_number' => $surgery->SessionNumber,
                 'session_date' => $surgery->booking_date,
@@ -95,7 +106,7 @@ class DashboardController extends Controller
                 'diagnosis' => $surgery->PreferredName,
                 'surgery' => $surgery->theatre_procedure_requested,
                 'urgent_cancer' => null,
-                'surgery_type' => $surgery->SessionType,
+                'surgery_type' => $validSurgeryType,
                 'surgery_category' => null,
                 'proposed_date_of_surgery' => null,
                 'date_of_surgery' => null,
@@ -114,7 +125,7 @@ class DashboardController extends Controller
                 'surgeon' => $surgery->Consultant,
                 'deposit_amount' => null,
                 'post_op_location' => null,
-                 'requires_anesthesia_clearance' => null,
+                'requires_anesthesia_clearance' => null,
                 'anesthesia_clearance_notes' => null,
                 'case_order' => null,
                 'sha_eligible' => null,
@@ -131,7 +142,7 @@ class DashboardController extends Controller
             ];
         });
 
-        // Combine local and remote surgeries using concat instead of merge
+        // Combine local and remote surgeries
         $recentSurgeries = $recentLocalSurgeries->concat($mappedRemoteSurgeries->take(5 - $recentLocalSurgeries->count()));
 
         // Log the fetched data
@@ -193,5 +204,33 @@ class DashboardController extends Controller
         }
 
         return view('theatre.surgeries.surgery_details', compact('surgery'));
+    }
+
+    public function finalizedSurgeries(Request $request)
+    {
+        $start_date = $request->input('start_date', now()->subDays(30)->toDateString());
+        $end_date = $request->input('end_date', now()->toDateString());
+        $query = $request->input('query');
+
+        $finalizedSurgeries = $this->theatreRepository->getFinalizedBookings($start_date, $end_date, $query);
+        $localSessionNumbers = Surgeries::pluck('session_number')->toArray();
+
+        $filteredFinalizedSurgeries = array_filter($finalizedSurgeries, function ($surgery) use ($localSessionNumbers) {
+            return !in_array($surgery->SessionNumber, $localSessionNumbers);
+        });
+
+        Log::info('Finalized surgeries fetched', [
+            'count' => count($filteredFinalizedSurgeries),
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'query' => $query,
+        ]);
+
+        return view('theatre.surgeries.finalized_surgery_list', compact(
+            'filteredFinalizedSurgeries',
+            'query',
+            'start_date',
+            'end_date'
+        ));
     }
 }

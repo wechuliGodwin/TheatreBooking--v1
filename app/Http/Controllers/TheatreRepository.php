@@ -128,4 +128,8 @@ class TheatreRepository
 
         return $results ? $results[0] : null;
     }
+    public function getFinalizedBookings($startDate, $endDate, $query = null)
+    {
+        return $this->getBookingsByDateRange($startDate, $endDate, $query, 'FINALIZED', null);
+    }
 }

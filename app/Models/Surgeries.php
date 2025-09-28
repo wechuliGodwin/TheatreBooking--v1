@@ -78,4 +78,8 @@ class Surgeries extends Model
         'entry_date' => 'date',
         'cancelled_at' => 'date',
     ];
+    public function reschedules()
+    {
+        return $this->hasMany(SurgeryReschedule::class, 'surgery_id');
+    }
 }

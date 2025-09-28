@@ -31,7 +31,7 @@
 
   <!-- Stats Cards Row -->
   <div class="row">
-        @foreach (['Need Surgery', 'SHA Submitted; Pending Approval', 'Insurance Approved/Deposit Paid; Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected', 'Cancelled'] as $status)
+        @foreach (['Need Surgery', 'SHA Submitted; Pending Approval', 'Insurance Approved/Deposit Paid; Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected', 'Cancelled', 'Finalized'] as $status)
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
@@ -138,7 +138,7 @@
       new Chart(trafficCtx, {
         type: 'bar',
         data: {
-          labels: ['Need Surgery', 'SHA Submitted', 'Pending Approval', 'Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected', 'Cancelled'],
+          labels: ['Need Surgery', 'SHA Submitted', 'Pending Approval', 'Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected', 'Cancelled', 'Finalized'],
           datasets: [{
             label: 'Surgery Count',
             data: [
@@ -149,10 +149,11 @@
               {{ $counts['Completed'] }},
               {{ $counts['Inactive'] }},
               {{ $counts['SHA Rejected'] }},
-              {{ $counts['Cancelled'] }}
+              {{ $counts['Cancelled'] }},
+              {{ $counts['Finalized'] }}
             ],
             backgroundColor: [
-              '#3498db', '#2ecc71', '#f39c12', '#1abc9c', '#2980b9', '#27ae60', '#e74c3c', '#f1c40f', '#c0392b'
+              '#3498db', '#2ecc71', '#f39c12', '#1abc9c', '#2980b9', '#27ae60', '#e74c3c', '#f1c40f', '#c0392b', '#8e44ad'
             ]
           }]
         },

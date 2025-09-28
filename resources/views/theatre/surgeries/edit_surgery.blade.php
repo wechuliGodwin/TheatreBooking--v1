@@ -69,14 +69,12 @@
                             <label for="patient_number" class="form-label small">Patient Number</label>
                             <input type="text" name="patient_number" id="patient_number" class="form-control form-control-sm readonly-field" value="{{ old('patient_number', $surgery->patient_number ?? '') }}" readonly>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-12">
-                            <label for="session_date" class="form-label small">Session Date</label>
-                            <input type="date" name="session_date" id="session_date" class="form-control form-control-sm readonly-field" value="{{ old('session_date', $surgery->session_date ?? '') }}" readonly>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-12">
-                            <label for="theatre_request_date" class="form-label small">Theatre Request Date</label>
-                            <input type="date" name="theatre_request_date" id="theatre_request_date" class="form-control form-control-sm readonly-field" value="{{ old('theatre_request_date', $surgery->theatre_request_date ?? '') }}" readonly>
-                        </div>
+                       <div class="col-lg-3 col-md-6 col-12">
+    <label for="theatre_request_date" class="form-label small">Theatre Request Date</label>
+    <input type="date" name="theatre_request_date" id="theatre_request_date" class="form-control form-control-sm readonly-field"
+           value="{{ old('theatre_request_date', $surgery->theatre_request_date ? $surgery->theatre_request_date->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                         <div class="col-lg-3 col-md-6 col-12">
                             <label for="phone_numbers" class="form-label small" data-bs-toggle="tooltip" title="Enter patient's contact numbers">Phone Numbers</label>
                             <input type="text" name="phone_numbers" id="phone_numbers" class="form-control form-control-sm readonly-field" value="{{ old('phone_numbers', $surgery->phone_numbers ?? '') }}" readonly>
@@ -108,10 +106,10 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-12">
+                                    <!-- <div class="col-lg-3 col-md-6 col-12">
                                         <label for="booking_status" class="form-label small">Booking Status</label>
                                         <input type="text" name="booking_status" id="booking_status" class="form-control form-control-sm readonly-field" value="{{ old('booking_status', $surgery->booking_status ?? '') }}" readonly>
-                                    </div>
+                                    </div> -->
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="diagnosis" class="form-label small">Diagnosis</label>
                                         <input type="text" name="diagnosis" id="diagnosis" class="form-control form-control-sm readonly-field" value="{{ old('diagnosis', $surgery->diagnosis ?? '') }}" readonly>
@@ -134,18 +132,22 @@
                                         <input type="text" name="surgery_category" id="surgery_category" class="form-control form-control-sm readonly-field" value="{{ old('surgery_category', $surgery->surgery_category ?? '') }}" readonly>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="proposed_date_of_surgery" class="form-label small">Proposed Date of Surgery</label>
-                                        <input type="date" name="proposed_date_of_surgery" id="proposed_date_of_surgery" class="form-control form-control-sm readonly-field" value="{{ old('proposed_date_of_surgery', $surgery->proposed_date_of_surgery ?? '') }}" readonly>
-                                    </div>
+    <label for="proposed_date_of_surgery" class="form-label small">Proposed Date of Surgery</label>
+    <input type="date" name="proposed_date_of_surgery" id="proposed_date_of_surgery" class="form-control form-control-sm readonly-field"
+           value="{{ old('proposed_date_of_surgery', $surgery->proposed_date_of_surgery ? $surgery->proposed_date_of_surgery->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                                     <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="date_of_surgery" class="form-label small">Date of Surgery</label>
-                                        <input type="date" name="date_of_surgery" id="date_of_surgery" class="form-control form-control-sm readonly-field" value="{{ old('date_of_surgery', $surgery->date_of_surgery ?? '') }}" readonly>
-                                    </div>
+    <label for="date_of_surgery" class="form-label small">Date of Surgery</label>
+    <input type="date" name="date_of_surgery" id="date_of_surgery" class="form-control form-control-sm readonly-field"
+           value="{{ old('date_of_surgery', $surgery->date_of_surgery ? $surgery->date_of_surgery->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="theatre_room" class="form-label small">Theatre Room</label>
                                         <select name="theatre_room" id="theatre_room" class="form-select form-select-sm readonly-field" disabled>
                                             <option value="">Select Room</option>
-                                            @foreach (['Room1', 'Room2', 'Room3', 'Room4', 'Other'] as $room)
+                                            @foreach (['Room1', 'Room2', 'Room3', 'Room4','OPERATION ROOM 1','OPERATION ROOM 2','OPERATION ROOM 3','OPERATION ROOM 4','OPERATION ROOM 5','OPERATION ROOM 6','Other'] as $room)
                                                 <option value="{{ $room }}" {{ old('theatre_room', $surgery->theatre_room ?? '') == $room ? 'selected' : '' }}>{{ $room }}</option>
                                             @endforeach
                                         </select>
@@ -158,10 +160,7 @@
                                         <label for="length_of_surgery" class="form-label small">Length of Surgery</label>
                                         <input type="text" name="length_of_surgery" id="length_of_surgery" class="form-control form-control-sm readonly-field" value="{{ old('length_of_surgery', $surgery->length_of_surgery ?? '') }}" readonly placeholder="e.g., 2 hours">
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="notes_comments" class="form-label small">Notes/Comments</label>
-                                        <textarea name="notes_comments" id="notes_comments" class="form-control form-control-sm readonly-field" rows="2" readonly>{{ old('notes_comments', $surgery->notes_comments ?? '') }}</textarea>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -202,10 +201,12 @@
                                         <label for="sha_approved_amount" class="form-label small">SHA Approved Amount</label>
                                         <input type="number" name="sha_approved_amount" id="sha_approved_amount" class="form-control form-control-sm readonly-field" value="{{ old('sha_approved_amount', $surgery->sha_approved_amount ?? '') }}" step="0.01" min="0" readonly>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="sha_expiry_date" class="form-label small">SHA Expiry Date</label>
-                                        <input type="date" name="sha_expiry_date" id="sha_expiry_date" class="form-control form-control-sm readonly-field" value="{{ old('sha_expiry_date', $surgery->sha_expiry_date ?? '') }}" readonly>
-                                    </div>
+                                   <div class="col-lg-3 col-md-6 col-12">
+    <label for="sha_expiry_date" class="form-label small">SHA Expiry Date</label>
+    <input type="date" name="sha_expiry_date" id="sha_expiry_date" class="form-control form-control-sm readonly-field"
+           value="{{ old('sha_expiry_date', $surgery->sha_expiry_date ? $surgery->sha_expiry_date->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="secondary_payer" class="form-label small">Secondary Payer</label>
                                         <select name="secondary_payer" id="secondary_payer" class="form-select form-select-sm readonly-field" disabled>
@@ -220,9 +221,11 @@
                                         <input type="number" name="second_payer_approved_amount" id="second_payer_approved_amount" class="form-control form-control-sm readonly-field" value="{{ old('second_payer_approved_amount', $surgery->second_payer_approved_amount ?? '') }}" step="0.01" min="0" readonly>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="date_deposit_paid" class="form-label small">Date Deposit Paid</label>
-                                        <input type="date" name="date_deposit_paid" id="date_deposit_paid" class="form-control form-control-sm readonly-field" value="{{ old('date_deposit_paid', $surgery->date_deposit_paid ?? '') }}" readonly>
-                                    </div>
+    <label for="date_deposit_paid" class="form-label small">Date Deposit Paid</label>
+    <input type="date" name="date_deposit_paid" id="date_deposit_paid" class="form-control form-control-sm readonly-field"
+           value="{{ old('date_deposit_paid', $surgery->date_deposit_paid ? $surgery->date_deposit_paid->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="deposit_amount" class="form-label small">Deposit Amount</label>
                                         <input type="number" name="deposit_amount" id="deposit_amount" class="form-control form-control-sm readonly-field" value="{{ old('deposit_amount', $surgery->deposit_amount ?? '') }}" step="0.01" min="0" readonly>
@@ -230,6 +233,10 @@
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="sha_eligible" class="form-label small" data-bs-toggle="tooltip" title="Check if eligible for SHA coverage">SHA Eligible</label>
                                         <input type="checkbox" name="sha_eligible" id="sha_eligible" class="form-check-input" {{ old('sha_eligible', $surgery->sha_eligible ?? false) ? 'checked' : '' }} value="1" disabled>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="notes_comments" class="form-label small">Notes/Comments</label>
+                                        <textarea name="notes_comments" id="notes_comments" class="form-control form-control-sm readonly-field" rows="2" readonly>{{ old('notes_comments', $surgery->notes_comments ?? '') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -302,9 +309,11 @@
                                         <input type="text" name="appointment_id" id="appointment_id" class="form-control form-control-sm readonly-field" value="{{ old('appointment_id', $surgery->appointment_id ?? '') }}" readonly>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-12">
-                                        <label for="entry_date" class="form-label small">Entry Date</label>
-                                        <input type="date" name="entry_date" id="entry_date" class="form-control form-control-sm readonly-field" value="{{ old('entry_date', $surgery->entry_date ?? '') }}" readonly>
-                                    </div>
+    <label for="entry_date" class="form-label small">Entry Date</label>
+    <input type="date" name="entry_date" id="entry_date" class="form-control form-control-sm readonly-field"
+           value="{{ old('entry_date', $surgery->entry_date ? $surgery->entry_date->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                                     <div class="col-lg-3 col-md-6 col-12">
                                         <label for="attachments" class="form-label small" data-bs-toggle="tooltip" title="Upload relevant documents (PDF, JPG, PNG)">Attachments</label>
                                         <input type="file" name="attachments[]" id="attachments" class="form-control form-control-sm readonly-field" multiple disabled>
@@ -344,10 +353,12 @@
                                             <label for="cancellation_type" class="form-label small">Cancellation Type</label>
                                             <input type="text" name="cancellation_type" id="cancellation_type" class="form-control form-control-sm readonly-field" value="{{ old('cancellation_type', $surgery->cancellation_type ?? '') }}" readonly>
                                         </div>
-                                        <div class="col-lg-3 col-md-6 col-12">
-                                            <label for="cancelled_at" class="form-label small">Cancelled At</label>
-                                            <input type="date" name="cancelled_at" id="cancelled_at" class="form-control form-control-sm readonly-field" value="{{ old('cancelled_at', $surgery->cancelled_at ?? '') }}" readonly>
-                                        </div>
+                                       <div class="col-lg-3 col-md-6 col-12">
+    <label for="cancelled_at" class="form-label small">Cancelled At</label>
+    <input type="date" name="cancelled_at" id="cancelled_at" class="form-control form-control-sm readonly-field"
+           value="{{ old('cancelled_at', $surgery->cancelled_at ? $surgery->cancelled_at->format('Y-m-d') : '') }}"
+           readonly>
+</div>
                                     </div>
                                 </div>
                             </div>
@@ -357,10 +368,138 @@
 
                 <div class="mt-3 d-flex gap-2">
                     <button type="submit" name="action" value="update" class="btn btn-primary btn-sm" disabled>Update</button>
+                    @if($surgery->scheduling_status === 'Scheduled')
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleModal">
+                            Reschedule Surgery
+                        </button>
+                    @endif
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Reschedule Modal -->
+    <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ route('surgery.reschedule', $surgery->id) }}">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Surgery</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @if ($errors->any())
+                            <div class="alert alert-danger mb-2 p-2">
+                                <strong>Validation Errors:</strong>
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        <div class="mb-2">
+                            <label for="date_of_surgery" class="form-label">New Date of Surgery</label>
+                            <input type="date" name="date_of_surgery" id="date_of_surgery" class="form-control"
+                                   value="{{ old('date_of_surgery', $surgery->date_of_surgery ? $surgery->date_of_surgery->format('Y-m-d') : '') }}" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="surgery" class="form-label">Surgery</label>
+                            <input type="text" name="surgery" id="surgery" class="form-control"
+                                   value="{{ old('surgery', $surgery->surgery) }}" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="surgeon" class="form-label">Surgeon</label>
+                            <input type="text" name="surgeon" id="surgeon" class="form-control"
+                                   value="{{ old('surgeon', $surgery->surgeon) }}" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="surgery_type" class="form-label">Surgery Type</label>
+                            <select name="surgery_type" id="surgery_type" class="form-select" required>
+                                <option value="">Select Type</option>
+                                @foreach(['Elective', 'Emergency', 'Minor', 'Major'] as $type)
+                                    <option value="{{ $type }}" {{ old('surgery_type', $surgery->surgery_type) == $type ? 'selected' : '' }}>{{ $type }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="surgery_category" class="form-label">Surgery Category</label>
+                            <input type="text" name="surgery_category" id="surgery_category" class="form-control"
+                                   value="{{ old('surgery_category', $surgery->surgery_category) }}">
+                        </div>
+                        <div class="mb-2">
+                            <label for="sha_procedure" class="form-label">SHA Procedure</label>
+                            <input type="text" name="sha_procedure" id="sha_procedure" class="form-control"
+                                   value="{{ old('sha_procedure', $surgery->sha_procedure) }}">
+                        </div>
+                        <div class="mb-2">
+                            <label for="case_order" class="form-label">Case Order</label>
+                            <input type="text" name="case_order" id="case_order" class="form-control"
+                                   value="{{ old('case_order', $surgery->case_order) }}">
+                        </div>
+                        <div class="mb-2">
+                            <label for="theatre_room" class="form-label">Theatre Room</label>
+                            <select name="theatre_room" id="theatre_room" class="form-select" required>
+                                <option value="">Select Room</option>
+                                @foreach(['Room1', 'Room2', 'Room3', 'Room4', 'OPERATION ROOM 1', 'OPERATION ROOM 2', 'OPERATION ROOM 3', 'OPERATION ROOM 4', 'OPERATION ROOM 5', 'OPERATION ROOM 6', 'Other'] as $room)
+                                    <option value="{{ $room }}" {{ old('theatre_room', $surgery->theatre_room) == $room ? 'selected' : '' }}>{{ $room }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="reason" class="form-label">Reason for Reschedule</label>
+                            <textarea name="reason" id="reason" class="form-control" required>{{ old('reason') }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Reschedule</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if($surgery->reschedules && $surgery->reschedules->count())
+        <div class="mt-3">
+            <h6>Reschedule History</h6>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Previous Date</th>
+                        <th>Surgery</th>
+                        <th>Surgeon</th>
+                        <th>Surgery Type</th>
+                        <th>Surgery Category</th>
+                        <th>SHA Procedure</th>
+                        <th>Case Order</th>
+                        <th>Theatre Room</th>
+                        <th>Reason</th>
+                        <th>Rescheduled At</th>
+                        <th>Rescheduled By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($surgery->reschedules as $reschedule)
+                        <tr>
+                            <td>{{ $reschedule->previous_date_of_surgery ? $reschedule->previous_date_of_surgery->format('Y-m-d') : 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_surgery ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_surgeon ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_surgery_type ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_surgery_category ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_sha_procedure ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_case_order ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->previous_theatre_room ?? 'N/A' }}</td>
+                            <td>{{ $reschedule->reason }}</td>
+                            <td>{{ $reschedule->created_at->format('Y-m-d H:i') }}</td>
+                            <td>{{ $reschedule->user->name ?? 'Unknown' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
 </div>
 
 <script>

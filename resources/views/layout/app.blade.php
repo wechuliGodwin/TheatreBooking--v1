@@ -282,7 +282,7 @@
 
         <nav class="nav flex-column">
             <a class="nav-link active" href="{{ route('dashboard') }}">
-                <i class="fas fa-tachometer-alt"></i>
+                <i class="fas fa-chart-pie"></i>
                 <span>Dashboard</span>
             </a>
         </nav>
@@ -300,7 +300,7 @@
                 <span>Theatre Status</span>
             </a>
             <ul class="nav-group-items collapse" id="theatreStatusSubmenu">
-                @foreach (['Need Surgery', 'SHA Submitted; Pending Approval', 'Insurance Approved/Deposit Paid; Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected', 'Cancelled'] as $status)
+                @foreach (['Need Surgery', 'SHA Submitted; Pending Approval', 'Insurance Approved/Deposit Paid; Ready to Schedule', 'Scheduled', 'Completed', 'Inactive', 'SHA Rejected'] as $status)
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('surgeries.filter', ['status' => $status]) }}">
                             <span class="nav-icon-bullet"></span>
@@ -309,7 +309,7 @@
                     </li>
                 @endforeach
             </ul>
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('surgeries.finalized') }}">
             <i class="fas fa-users"></i>
             <span>Finalized Surgeries</span>
         </a>
@@ -317,8 +317,17 @@
          <!-- <a class="nav-link" href="{{ route('surgeries.filter', ['status' => 'Cancelled']) }}">
         <i class="fas fa-ban"></i>
         <span>Cancelled Appointments</span> -->
-    </a>
+        <a class="nav-link" href="{{ route('surgeries.rescheduled') }}">
+    <i class="fas fa-history"></i>
+    <span>Rescheduled Surgeries</span>
+</a>
 
+<a class="nav-link" href="{{ route('surgeries.cancelled') }}">
+            <i class="fas fa-calendar-times"></i>
+            <span>Cancelled Surgeries</span>
+        </a>
+    
+<!-- <i class="fas fa-calendar-check"></i> <i class="fas fa-hourglass-half"></i> to be used late -->
         <!-- <nav class="nav flex-column">
                 <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#pinkFormSubmenu" aria-expanded="false">
                     <i class="fas fa-chart-bar"></i>
@@ -348,7 +357,7 @@
         </nav>
         <nav class="nav flex-column">
             <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
-                <i class="fas fa-chart-bar"></i>
+                <i class="fas fa-file-alt"></i>
                 <span>Reports</span>
             </a>
             <ul class="nav-group-items collapse" id="reportsSubmenu">
@@ -368,7 +377,7 @@
         </nav>
         <nav class="nav flex-column">
             <a class="nav-link nav-group-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#accountsSubmenu" aria-expanded="false">
-                <i class="fas fa-chart-bar"></i>
+                <i class="fas fa-user-cog"></i>
                 <span>Accounts</span>
             </a>
             <ul class="nav-group-items collapse" id="accountsSubmenu">
